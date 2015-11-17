@@ -17,11 +17,11 @@ import medproject.medlibrary.concurrency.RequestCodes;
 
 public class DataLoader implements Runnable{
 
-	private final Logger logger = LogWriter.getLogger("DataLoader");
+	private final Logger LOG = LogWriter.getLogger("DataLoader");
 	
 	private final Thread thread;  
 	private final AtomicBoolean connectionStatus;
-
+//TODO: Move connectionStatus to the connectionThread and callback methods etc.
 	private Request currentRequest;
 	private Boolean currentRequestCompleted = true;
 	private Boolean currentRequestSent = false;
@@ -51,7 +51,7 @@ public class DataLoader implements Runnable{
 				try {
 					request = completedRequests.take();
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					LOG.severe("Data Loader thread interrupted");
 				}
 				
 				processCompletedRequest(request);
@@ -89,13 +89,13 @@ public class DataLoader implements Runnable{
 	}
 	
 	public void start() throws IOException{	
-		logger.info("Starting data loader");
+		LOG.info("Starting data loader");
 		thread.start();
 		connectionThread.start();
 	}
 	
 	public void stop(){
-		logger.info("Stopping data loader");
+		LOG.info("Stopping data loader");
 		thread.interrupt();
 		connectionThread.stop();
 	}

@@ -1,41 +1,45 @@
 package medproject.medclient.graphicalInterface.mainWindow;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import medproject.medclient.graphicalInterface.ControllerInterface;
-import medproject.medclient.graphicalInterface.mainWindow.mainFrame.MainController;
+import medproject.medclient.logging.LogWriter;
 
 public class Navigator {
 	//TODO: Refactor the navigator
-	public static final String MAIN_FRAME = "./mainFrame/mainFrame.fxml";
+	private static final Logger LOG = LogWriter.getLogger("Navigator");
+
 	public static final String LOGIN_SCENE = "./loginScene/loginScene.fxml";
+
+	private static MainWindow mainWindow = null;
 	
-	private static MainController mainController;
-
-	public static MainController getMainController() {
-		return mainController;
+	public static void setMainWindow(MainWindow mainWindow) {
+		Navigator.mainWindow = mainWindow;
 	}
 
-	public static void setMainController(MainController mainController) {
-		Navigator.mainController = mainController;
-	}
-	 
 	public static void loadScene(String fxml) {
 
-	       try {
-	    	   FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
-	    	   Pane scene = (Pane) loader.load();
-	    	   
-	    	   mainController.setScene(scene);
-	    	   
-	           ControllerInterface currentController = (ControllerInterface)loader.getController();
-	    	   currentController.init(mainController.getDataLoader(), mainController.getUpdateExecutor());
-	    	   
-	       } catch (IOException e) {
-	           e.printStackTrace();
-	       }
-	   }
-	
+		if(mainWindow == null){
+			LOG.severe("Navigator not initialized");
+			return;
+		}
+
+		try {
+			FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
+			Pane pane = (Pane) loader.load();
+			Scene scene = new Scene(pane);
+			mainWindow.setScene(scene);
+
+			ControllerInterface currentController = (ControllerInterface)loader.getController();
+			currentController.init(mainWindow.getDataLoader(), mainWindow.getUpdateExecutor());
+
+		} catch (IOException e) {
+			LOG.severe("Cannot find fxml file location for value: " + fxml);
+		}
+	}
+
 }

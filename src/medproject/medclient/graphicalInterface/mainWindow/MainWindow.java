@@ -1,6 +1,5 @@
 package medproject.medclient.graphicalInterface.mainWindow;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,17 +7,13 @@ import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import medproject.medclient.dataLoader.DataLoader;
-import medproject.medclient.graphicalInterface.mainWindow.mainFrame.MainController;
 
 public class MainWindow{
 	
-	public MainController mainController;
 	public DataLoader dataLoader;
 	private ExecutorService updateExecutor;
 	
@@ -27,28 +22,28 @@ public class MainWindow{
 	public void startWindow(DataLoader dataLoader) throws Exception {
 		this.updateExecutor = Executors.newSingleThreadScheduledExecutor();
 		this.dataLoader = dataLoader;
+		Navigator.setMainWindow(this);
 		start();
 	}
 
 	public void start() throws Exception {
 		primaryWindow = new Stage();
-		Scene scene = createScene(loadMainPane());
-		
 		primaryWindow.setTitle("Messenger");
-        primaryWindow.setScene(scene);
         primaryWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 System.out.println("Stage is closing");
                 stop();
             }
         });  
-        primaryWindow.show();
-        
+        Navigator.loadScene(Navigator.LOGIN_SCENE);
+        primaryWindow.show();    
     }
 	
 	public void stop(){
 		dataLoader.stop();
 		primaryWindow.close();
+		Platform.exit();
+		System.exit(0);
 	}
 	
 	public void modifyConnectionStatus(boolean connectionStatus){
@@ -71,42 +66,15 @@ public class MainWindow{
 		}
 	}
 	
-	private Pane loadMainPane() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
- 
-        Pane mainPane = (Pane) loader.load(
-            getClass().getResourceAsStream(
-                Navigator.MAIN_FRAME
-            )
-        );
- 
-        MainController mainController = loader.getController();
-        mainController.init(dataLoader, updateExecutor);
-        
-        Navigator.setMainController(mainController);
-        Navigator.loadScene(Navigator.LOGIN_SCENE);
-        return mainPane;
-    }
-	
-	private Scene createScene(Pane mainPane) {
-        Scene scene = new Scene(
-            mainPane
-        );
- 
-        scene.getStylesheets().setAll(
-            getClass().getResource("style.css").toExternalForm()
-        );
-        
-        
-        return scene;
-    }
-	
-	public MainController getLoginController() {
-		return mainController;
+	public void setScene(Scene scene){
+		primaryWindow.setScene(scene);
 	}
-
+	
 	public ExecutorService getUpdateExecutor() {
 		return updateExecutor;
 	}
 
+	public DataLoader getDataLoader() {
+		return dataLoader;
+	}
 }

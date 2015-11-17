@@ -26,7 +26,7 @@ import medproject.medlibrary.concurrency.Request;
 
 public class NetConnectionThread implements Runnable{
 
-	private final Logger logger = LogWriter.getLogger("DataLoader");
+	private final Logger LOG = LogWriter.getLogger("DataLoader");
 
 	private static final long INITIAL_RECONNECT_INTERVAL = 500; // 500 ms.
 	private static final long MAXIMUM_RECONNECT_INTERVAL = 30000; // 30 sec.
@@ -65,7 +65,7 @@ public class NetConnectionThread implements Runnable{
 	}
 
 	public void start() throws IOException {
-		logger.info("Starting connection thread");
+		LOG.info("Starting connection thread");
 		thread.start();
 	}
 
@@ -74,7 +74,7 @@ public class NetConnectionThread implements Runnable{
 	}
 
 	public void stop() {
-		logger.info("Stopping connection thread");
+		LOG.info("Stopping connection thread");
 		thread.interrupt();
 		selector.wakeup();
 	}
@@ -131,26 +131,26 @@ public class NetConnectionThread implements Runnable{
 					}
 					
 				} catch (Exception e) {
-					logger.severe("Connection thread exception");
+					LOG.severe("Connection thread exception");
 				} finally {
 					onDisconnected();
 					//writeBuf.clear();
 					readBuf.clear();
 					if (channel != null) channel.close();
 					if (selector != null) selector.close();
-					logger.info("Connection closed");
+					LOG.info("Connection closed");
 				}
 
 				try {
 					Thread.sleep(reconnectInterval);
 					if (reconnectInterval < MAXIMUM_RECONNECT_INTERVAL) reconnectInterval *= 2;
-					logger.info("Reconnecting to " + address);
+					LOG.info("Reconnecting to " + address);
 				} catch (InterruptedException e) {
 					break;
 				}
 			}
 		} catch (Exception e) {
-			logger.severe("Unrecoverable error");
+			LOG.severe("Unrecoverable error");
 		}
 	}
 
@@ -204,7 +204,7 @@ public class NetConnectionThread implements Runnable{
 	private void processConnect(SelectionKey key) throws Exception {
 		SocketChannel ch = (SocketChannel) key.channel();
 		if (ch.finishConnect()) {
-			logger.info("Connected to " + address);
+			LOG.info("Connected to " + address);
 			key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_READ);
 			reconnectInterval = INITIAL_RECONNECT_INTERVAL;
 			dataLoader.setConnectionStatus(true);
