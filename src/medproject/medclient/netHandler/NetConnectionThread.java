@@ -27,18 +27,18 @@ import medproject.medlibrary.concurrency.Request;
 public class NetConnectionThread implements Runnable{
 
 	private final Logger logger = LogWriter.getLogger("DataLoader");
-	
+
 	private static final long INITIAL_RECONNECT_INTERVAL = 500; // 500 ms.
 	private static final long MAXIMUM_RECONNECT_INTERVAL = 30000; // 30 sec.
 	private static final int READ_BUFFER_SIZE = 1000000;//0x100000;
-	private static final int WRITE_BUFFER_SIZE = 65000;//0x100000; //NU IL FOLOSESC LA NIMIC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//private static final int WRITE_BUFFER_SIZE = 65000;//0x100000;
 
 	private long reconnectInterval = INITIAL_RECONNECT_INTERVAL;
 
 	private ByteBuffer readBuf = ByteBuffer.allocateDirect(READ_BUFFER_SIZE); // 1Mb
-	private ByteBuffer writeBuf = ByteBuffer.allocateDirect(WRITE_BUFFER_SIZE); // 1Mb
+	//private ByteBuffer writeBuf = ByteBuffer.allocateDirect(WRITE_BUFFER_SIZE); // 1Mb
 
-	private final Thread thread = new Thread(this);
+	private final Thread thread;
 	private SocketAddress address;
 
 	private Selector selector;
@@ -53,9 +53,8 @@ public class NetConnectionThread implements Runnable{
 	private final DataLoader dataLoader;
 
 	public NetConnectionThread(DataLoader dataLoader) {
-
 		this.dataLoader = dataLoader;
-
+		thread = new Thread(this);
 		reader = new NetRead(dataLoader);
 		sender = new NetSend();
 	}
@@ -123,18 +122,19 @@ public class NetConnectionThread implements Runnable{
 					selector = Selector.open();
 					channel = SocketChannel.open();
 					configureChannel(channel);
-
 					channel.connect(address);
 					channel.register(selector, SelectionKey.OP_CONNECT);
+					
 					while(!thread.isInterrupted() && channel.isOpen()) { // events multiplexing loop
 						checkPendingRequestStatus();  
 						if (selector.selectNow() > 0) processSelectedKeys(selector.selectedKeys());
 					}
+					
 				} catch (Exception e) {
 					logger.severe("Connection thread exception");
 				} finally {
 					onDisconnected();
-					writeBuf.clear();
+					//writeBuf.clear();
 					readBuf.clear();
 					if (channel != null) channel.close();
 					if (selector != null) selector.close();
@@ -159,21 +159,20 @@ public class NetConnectionThread implements Runnable{
 
 		while (itr.hasNext()) {
 			SelectionKey currentKey = (SelectionKey) itr.next();
+
 			if (currentKey.isConnectable())		processConnect(currentKey);
 			else if (currentKey.isReadable()){	
-				System.out.println("ClientReadable");
 				reader.read(currentKey, readBuf, bytesIn);
 			}
-			else if (currentKey.isWritable()) {	System.out.println("ClientWritable");
-
-			if(dataLoader.getCurrentRequestSent() == false)
-				if(sender.send(currentKey, dataLoader.getCurrentRequest(), bytesOut) == false){	
-					dataLoader.getPendingRequests().add(dataLoader.getCurrentRequest());	    			 
-				}
-				else{
-					dataLoader.setCurrentRequestSent(true);
-					if(!dataLoader.getCurrentRequest().isWaitForReply())
-						dataLoader.setCurrentRequestCompleted(true);				}
+			else if (currentKey.isWritable()) {	
+				if(dataLoader.getCurrentRequestSent() == false)
+					if(sender.send(currentKey, dataLoader.getCurrentRequest(), bytesOut) == false){	
+						dataLoader.getPendingRequests().add(dataLoader.getCurrentRequest());	    			 
+					}
+					else{
+						dataLoader.setCurrentRequestSent(true);
+						if(!dataLoader.getCurrentRequest().isWaitForReply())
+							dataLoader.setCurrentRequestCompleted(true);				}
 			}
 			if (currentKey.isAcceptable()) ;
 
@@ -203,7 +202,6 @@ public class NetConnectionThread implements Runnable{
 	}
 
 	private void processConnect(SelectionKey key) throws Exception {
-
 		SocketChannel ch = (SocketChannel) key.channel();
 		if (ch.finishConnect()) {
 			logger.info("Connected to " + address);

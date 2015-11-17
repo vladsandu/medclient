@@ -9,7 +9,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
-import medproject.medclient.graphicalInterface.loginWindow.LoginWindow;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
@@ -23,7 +22,6 @@ public class DataLoader implements Runnable{
 	private final Thread thread;  
 	private final AtomicBoolean connectionStatus;
 
-	
 	private Request currentRequest;
 	private Boolean currentRequestCompleted = true;
 	private Boolean currentRequestSent = false;
@@ -32,9 +30,10 @@ public class DataLoader implements Runnable{
 	private final LinkedBlockingQueue<Request> completedRequests;
 
 	private final NetConnectionThread connectionThread;
+	private final MainWindow mainWindow;
 	
-	public DataLoader(LoginWindow loginWindow, MainWindow mainWindow) {
-
+	public DataLoader(MainWindow mainWindow) {
+		this.mainWindow = mainWindow;
 		connectionThread = new NetConnectionThread(this);
 		connectionThread.setAddress(new InetSocketAddress("localhost", 1338));
 
@@ -42,14 +41,6 @@ public class DataLoader implements Runnable{
 		completedRequests = new LinkedBlockingQueue<Request>();
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
-	}
-	
-	public boolean getConnectionStatus(){
-		return connectionStatus.get();
-	}
-	
-	public void setConnectionStatus(Boolean value){
-		connectionStatus.set(value);
 	}
 	
 	@Override
@@ -99,7 +90,7 @@ public class DataLoader implements Runnable{
 	
 	public void start() throws IOException{	
 		logger.info("Starting data loader");
-		this.thread.start();
+		thread.start();
 		connectionThread.start();
 	}
 	
@@ -109,6 +100,14 @@ public class DataLoader implements Runnable{
 		connectionThread.stop();
 	}
 
+	public boolean getConnectionStatus(){
+		return connectionStatus.get();
+	}
+	
+	public void setConnectionStatus(Boolean value){
+		connectionStatus.set(value);
+	}	
+	
 	public List<Request> getPendingRequests() {
 		return pendingRequests;
 	}

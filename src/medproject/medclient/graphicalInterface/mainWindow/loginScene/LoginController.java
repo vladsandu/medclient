@@ -1,4 +1,4 @@
-package medproject.medclient.graphicalInterface.loginWindow.loginScene;
+package medproject.medclient.graphicalInterface.mainWindow.loginScene;
 
 import java.util.concurrent.ExecutorService;
 
@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
-import medproject.medclient.graphicalInterface.loginWindow.LoginNavigator;
+import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 
 public class LoginController implements ControllerInterface{
 
@@ -24,7 +24,6 @@ public class LoginController implements ControllerInterface{
 	}
 
 	@FXML protected void onRegisterPress(){
-		LoginNavigator.loadScene(LoginNavigator.REGISTER_WELCOME_SCENE);
 	}
 
 	@Override

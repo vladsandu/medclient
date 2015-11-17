@@ -1,4 +1,4 @@
-package medproject.medclient.graphicalInterface.loginWindow.mainFrame;
+package medproject.medclient.graphicalInterface.mainWindow.mainFrame;
 
 import java.util.concurrent.ExecutorService;
 
@@ -9,7 +9,7 @@ import javafx.scene.layout.StackPane;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
 
-public class MainLoginController implements ControllerInterface{
+public class MainController implements ControllerInterface{
 
 	private DataLoader dataLoader;
 	private ExecutorService updateExecutor;
