@@ -1,75 +1,66 @@
 package medproject.medclient.dataLoader;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
 
-import medproject.medclient.requestHandler.Request;
+import medproject.medclient.graphicalInterface.loginWindow.LoginWindow;
+import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
+import medproject.medclient.netHandler.NetConnectionThread;
 import medproject.medclient.requestHandler.RequestCodes;
-import medproject.medclient.requestHandler.RequestHandler;
-import medproject.medclient.requestHandler.RequestMaker;
-import medproject.medlibrary.account.Account;
+import medproject.medlibrary.concurrency.Request;
 
 public class DataLoader implements Runnable{
 
-	private Account currentAccount = new Account(-1,"unset", "unset");
-	
 	private final Thread thread;  
-	private final RequestMaker requestMaker;
-	
 	private final AtomicBoolean connectionStatus;
+
 	
-	private LinkedList<Request> loadingList = new LinkedList<Request>();
-	private LinkedList<Request> completedRequests;
+	private Request currentRequest;
+	private Boolean currentRequestCompleted = true;
+	private Boolean currentRequestSent = false;
+
+	private final List<Request> pendingRequests;
+	private final LinkedBlockingQueue<Request> completedRequests;
+
 	
 	
-	public DataLoader(LoginWindow loginWindow, MainWindow mainWindow, RequestMaker requestMaker, RequestHandler requestHandler, AtomicBoolean connectionStatus) {
-		this.loginWindow = loginWindow;
-		this.mainWindow = mainWindow;
-		this.connectionStatus = connectionStatus;
-		
-		this.requestMaker = requestMaker;
-		
-		this.completedRequests = requestHandler.getCompletedRequests();
-		
-		this.thread = new Thread(this);
+	public DataLoader(LoginWindow loginWindow, MainWindow mainWindow) {
+		pendingRequests = Collections.synchronizedList(new ArrayList<Request>());
+		completedRequests = new LinkedBlockingQueue<Request>();
+		connectionStatus = new AtomicBoolean(false);
+		thread = new Thread(this);
 	}
 	
 	public boolean getConnectionStatus(){
 		return connectionStatus.get();
 	}
 	
+	public void setConnectionStatus(Boolean value){
+		connectionStatus.set(value);
+	}
 	
 	@Override
 	public void run(){
-		try{
-			
-		while(!Thread.interrupted()){  
-			checkLoginWindowConnection();
-			
-			synchronized(this.loadingList){
-				if(!loadingList.isEmpty()){	
-					for(Request request : this.loadingList)
-						this.requestMaker.makeRequest(request);
-					
-					this.loadingList.clear();
+		
+			while(!Thread.interrupted()){  
+				System.out.println("test");
+				Request request = null;
+				try {
+					request = completedRequests.take();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				
+				processCompletedRequest(request);
+						
 			}
-			
-			synchronized(this.completedRequests){
-				if(!this.completedRequests.isEmpty()){
-					for(Request request : this.completedRequests)
-						processCompletedRequest(request);
-					
-					this.completedRequests.clear();
-				}
-			}
-			
-			Thread.sleep(20);
-		}
-		}catch (Exception e){
-			Logger.getAnonymousLogger().severe("Event loop terminated!");
-		}
+	}
+	
+	public void makeRequest(Request request){
+		pendingRequests.add(request);
 	}
 
 	/**
@@ -79,19 +70,22 @@ public class DataLoader implements Runnable{
 	
 	private void processCompletedRequest(Request request) {
 		
-		switch(RequestCodes.requestTypeGetter(request)){
-			}	
+		
 	}
 
-	public void checkLoginWindowConnection(){
-		loginWindow.runAndWait(new Runnable(){
+	public void processNewRequest(Request processingRequest){
+		if(processingRequest.getREQUEST_STATUS() == RequestCodes.REQUEST_UNAUTHORIZED){
+		
+		}
+		else{
+			completedRequests.add(processingRequest);
 			
-			@Override
-			public void run() {
-				loginWindow.modifyConnectionStatus(getConnectionStatus());
-			}
-			}
-		);
+			if(processingRequest.getREQUEST_CODE() == currentRequest.getREQUEST_CODE())
+				setCurrentRequestCompleted(true);
+		}
+	}
+	
+	public void checkLoginWindowConnection(){
 	}
 	
 	public void start(){	
@@ -102,15 +96,31 @@ public class DataLoader implements Runnable{
 		this.thread.interrupt();
 	}
 
-	public LinkedList<Request> getLoadingList() {
-		return loadingList;
+	public List<Request> getPendingRequests() {
+		return pendingRequests;
 	}
 
-	public Account getCurrentAccount() {
-		return currentAccount;
+	public Request getCurrentRequest() {
+		return currentRequest;
 	}
 
-	public void setCurrentAccount(Account currentAccount) {
-		this.currentAccount = currentAccount;
+	public void setCurrentRequest(Request currentRequest) {
+		this.currentRequest = currentRequest;
+	}
+
+	public Boolean getCurrentRequestCompleted() {
+		return currentRequestCompleted;
+	}
+
+	public void setCurrentRequestCompleted(Boolean currentRequestCompleted) {
+		this.currentRequestCompleted = currentRequestCompleted;
+	}
+
+	public Boolean getCurrentRequestSent() {
+		return currentRequestSent;
+	}
+
+	public void setCurrentRequestSent(Boolean currentRequestSent) {
+		this.currentRequestSent = currentRequestSent;
 	}
 }

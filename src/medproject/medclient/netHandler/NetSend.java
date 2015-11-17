@@ -8,7 +8,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.atomic.AtomicLong;
 
-import medproject.medclient.requestHandler.Request;
+import medproject.medlibrary.concurrency.Request;
 
 public class NetSend {
 

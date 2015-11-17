@@ -8,19 +8,19 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.atomic.AtomicLong;
 
-import medproject.medclient.requestHandler.Request;
-import medproject.medclient.requestHandler.RequestHandler;
+import medproject.medclient.dataLoader.DataLoader;
+import medproject.medlibrary.concurrency.Request;
 
 public class NetRead {
 	
-	RequestHandler requestHandler;
+	DataLoader dataLoader;
 	private int bytesForMessageSize = 8;
 	
 	private boolean finishedReading = true;
 	private int currentMessageByteSize = 0;
 	
-	public NetRead(RequestHandler requestHandler) {
-		this.requestHandler = requestHandler;
+	public NetRead(DataLoader dataLoader) {
+		this.dataLoader = dataLoader;
 	}
 
 
@@ -72,7 +72,7 @@ public class NetRead {
 			objectStream.close();
 			System.out.println("Request cerut: " + currentRequest.getREQUEST_CODE());
     
-			requestHandler.processRequest(currentRequest);
+			dataLoader.processNewRequest(currentRequest);
 			
 	    	currentMessageByteSize = 0;
 		}
