@@ -1,19 +1,25 @@
 package medproject.medclient.dataLoader;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 import medproject.medclient.graphicalInterface.loginWindow.LoginWindow;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
+import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
-import medproject.medclient.requestHandler.RequestCodes;
 import medproject.medlibrary.concurrency.Request;
+import medproject.medlibrary.concurrency.RequestCodes;
 
 public class DataLoader implements Runnable{
 
+	private final Logger logger = LogWriter.getLogger("DataLoader");
+	
 	private final Thread thread;  
 	private final AtomicBoolean connectionStatus;
 
@@ -25,9 +31,13 @@ public class DataLoader implements Runnable{
 	private final List<Request> pendingRequests;
 	private final LinkedBlockingQueue<Request> completedRequests;
 
-	
+	private final NetConnectionThread connectionThread;
 	
 	public DataLoader(LoginWindow loginWindow, MainWindow mainWindow) {
+
+		connectionThread = new NetConnectionThread(this);
+		connectionThread.setAddress(new InetSocketAddress("localhost", 1338));
+
 		pendingRequests = Collections.synchronizedList(new ArrayList<Request>());
 		completedRequests = new LinkedBlockingQueue<Request>();
 		connectionStatus = new AtomicBoolean(false);
@@ -46,7 +56,6 @@ public class DataLoader implements Runnable{
 	public void run(){
 		
 			while(!Thread.interrupted()){  
-				System.out.println("test");
 				Request request = null;
 				try {
 					request = completedRequests.take();
@@ -88,12 +97,16 @@ public class DataLoader implements Runnable{
 	public void checkLoginWindowConnection(){
 	}
 	
-	public void start(){	
+	public void start() throws IOException{	
+		logger.info("Starting data loader");
 		this.thread.start();
+		connectionThread.start();
 	}
 	
 	public void stop(){
-		this.thread.interrupt();
+		logger.info("Stopping data loader");
+		thread.interrupt();
+		connectionThread.stop();
 	}
 
 	public List<Request> getPendingRequests() {

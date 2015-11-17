@@ -21,11 +21,13 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 
 import medproject.medclient.dataLoader.DataLoader;
+import medproject.medclient.logging.LogWriter;
 import medproject.medlibrary.concurrency.Request;
 
 public class NetConnectionThread implements Runnable{
 
-	protected static final Logger LOG = Logger.getAnonymousLogger();
+	private final Logger logger = LogWriter.getLogger("DataLoader");
+	
 	private static final long INITIAL_RECONNECT_INTERVAL = 500; // 500 ms.
 	private static final long MAXIMUM_RECONNECT_INTERVAL = 30000; // 30 sec.
 	private static final int READ_BUFFER_SIZE = 1000000;//0x100000;
@@ -56,18 +58,6 @@ public class NetConnectionThread implements Runnable{
 
 		reader = new NetRead(dataLoader);
 		sender = new NetSend();
-
-		NetConnectionThread.LOG.setLevel(Level.INFO);
-
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				LOG.info("out bytes: " + bytesOut.get());
-				LOG.info("in bytes:  " + bytesIn.get());
-			}
-		}, 5000, 5000);
-
 	}
 
 	@PostConstruct
@@ -76,7 +66,7 @@ public class NetConnectionThread implements Runnable{
 	}
 
 	public void start() throws IOException {
-		LOG.info("starting event loop");
+		logger.info("Starting connection thread");
 		thread.start();
 	}
 
@@ -84,8 +74,8 @@ public class NetConnectionThread implements Runnable{
 		if (Thread.currentThread().getId() != thread.getId()) thread.join();
 	}
 
-	public void stop() throws IOException, InterruptedException {
-		LOG.info("stopping event loop");
+	public void stop() {
+		logger.info("Stopping connection thread");
 		thread.interrupt();
 		selector.wakeup();
 	}
@@ -111,7 +101,7 @@ public class NetConnectionThread implements Runnable{
 	 * @param buf
 	 */
 	protected void onDisconnected(){
-
+		dataLoader.setConnectionStatus(false);
 	};
 
 	private void configureChannel(SocketChannel channel) throws IOException {
@@ -127,7 +117,6 @@ public class NetConnectionThread implements Runnable{
 
 	@Override
 	public void run() {
-		LOG.info("event loop running");
 		try {
 			while(! Thread.interrupted()) { // reconnection loop
 				try {
@@ -142,30 +131,27 @@ public class NetConnectionThread implements Runnable{
 						if (selector.selectNow() > 0) processSelectedKeys(selector.selectedKeys());
 					}
 				} catch (Exception e) {
-					LOG.severe("exception");
+					logger.severe("Connection thread exception");
 				} finally {
-					dataLoader.setConnectionStatus(false);
 					onDisconnected();
 					writeBuf.clear();
 					readBuf.clear();
 					if (channel != null) channel.close();
 					if (selector != null) selector.close();
-					LOG.info("connection closed");
+					logger.info("Connection closed");
 				}
 
 				try {
 					Thread.sleep(reconnectInterval);
 					if (reconnectInterval < MAXIMUM_RECONNECT_INTERVAL) reconnectInterval *= 2;
-					LOG.info("reconnecting to " + address);
+					logger.info("Reconnecting to " + address);
 				} catch (InterruptedException e) {
 					break;
 				}
 			}
 		} catch (Exception e) {
-			LOG.severe("unrecoverable error");
+			logger.severe("Unrecoverable error");
 		}
-
-		LOG.info("event loop terminated");
 	}
 
 	private void processSelectedKeys(Set<SelectionKey> keys) throws Exception {
@@ -173,14 +159,14 @@ public class NetConnectionThread implements Runnable{
 
 		while (itr.hasNext()) {
 			SelectionKey currentKey = (SelectionKey) itr.next();
-			if (currentKey.isConnectable()) processConnect(currentKey);
-
+			if (currentKey.isConnectable())		processConnect(currentKey);
 			else if (currentKey.isReadable()){	
 				System.out.println("ClientReadable");
 				reader.read(currentKey, readBuf, bytesIn);
 			}
 			else if (currentKey.isWritable()) {	System.out.println("ClientWritable");
-			if(dataLoader.getCurrentRequestCompleted() == false && dataLoader.getCurrentRequestSent() == false)
+
+			if(dataLoader.getCurrentRequestSent() == false)
 				if(sender.send(currentKey, dataLoader.getCurrentRequest(), bytesOut) == false){	
 					dataLoader.getPendingRequests().add(dataLoader.getCurrentRequest());	    			 
 				}
@@ -220,16 +206,12 @@ public class NetConnectionThread implements Runnable{
 
 		SocketChannel ch = (SocketChannel) key.channel();
 		if (ch.finishConnect()) {
-			LOG.info("connected to " + address);
+			logger.info("Connected to " + address);
 			key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_READ);
 			reconnectInterval = INITIAL_RECONNECT_INTERVAL;
 			dataLoader.setConnectionStatus(true);
 			onConnected();
 		}
-	}
-
-	public SocketAddress getAddress() {
-		return address;
 	}
 
 	public void setAddress(SocketAddress address) {

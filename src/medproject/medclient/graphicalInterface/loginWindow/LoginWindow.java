@@ -7,10 +7,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.loginWindow.loginScene.LoginController;
 import medproject.medclient.graphicalInterface.loginWindow.mainFrame.MainLoginController;
@@ -37,11 +39,18 @@ public class LoginWindow{
 		
 		primaryWindow.setTitle("Messenger");
         primaryWindow.setScene(scene);
+        primaryWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                System.out.println("Stage is closing");
+                stop();
+            }
+        });  
         primaryWindow.show();
         
     }
 	
 	public void stop(){
+		dataLoader.stop();
 		primaryWindow.close();
 	}
 	
