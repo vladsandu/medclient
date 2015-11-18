@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -38,7 +40,6 @@ public class NetConnectionThread implements Runnable{
 	private ByteBuffer readBuf = ByteBuffer.allocateDirect(READ_BUFFER_SIZE); // 1Mb
 	//private ByteBuffer writeBuf = ByteBuffer.allocateDirect(WRITE_BUFFER_SIZE); // 1Mb
 
-	private final Thread thread;
 	private SocketAddress address;
 
 	private Selector selector;
@@ -54,7 +55,6 @@ public class NetConnectionThread implements Runnable{
 
 	public NetConnectionThread(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;
-		thread = new Thread(this);
 		reader = new NetRead(dataLoader);
 		sender = new NetSend();
 	}
@@ -66,16 +66,12 @@ public class NetConnectionThread implements Runnable{
 
 	public void start() throws IOException {
 		LOG.info("Starting connection thread");
-		thread.start();
-	}
-
-	public void join() throws InterruptedException {
-		if (Thread.currentThread().getId() != thread.getId()) thread.join();
+		connectToServer();
+		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this, 0, 500, TimeUnit.MILLISECONDS);
 	}
 
 	public void stop() {
 		LOG.info("Stopping connection thread");
-		thread.interrupt();
 		selector.wakeup();
 	}
 
@@ -112,45 +108,41 @@ public class NetConnectionThread implements Runnable{
 		channel.socket().setSoLinger(false, 0);
 		channel.socket().setSoTimeout(0);
 		channel.socket().setTcpNoDelay(true);
+		channel.connect(address);
+		channel.register(selector, SelectionKey.OP_CONNECT);
 	}
 
+	private void connectToServer() throws IOException{
+		selector = Selector.open();
+		channel = SocketChannel.open();
+		configureChannel(channel);
+	}
 	@Override
 	public void run() {
 		try {
-			while(! Thread.interrupted()) { // reconnection loop
-				try {
-					selector = Selector.open();
-					channel = SocketChannel.open();
-					configureChannel(channel);
-					channel.connect(address);
-					channel.register(selector, SelectionKey.OP_CONNECT);
-					
-					while(!thread.isInterrupted() && channel.isOpen()) { // events multiplexing loop
-						checkPendingRequestStatus();  
-						if (selector.selectNow() > 0) processSelectedKeys(selector.selectedKeys());
-					}
-					
-				} catch (Exception e) {
-					LOG.severe("Connection thread exception");
-				} finally {
-					onDisconnected();
-					//writeBuf.clear();
-					readBuf.clear();
-					if (channel != null) channel.close();
-					if (selector != null) selector.close();
-					LOG.info("Connection closed");
-				}
-
+			if(channel.isOpen()) { // events multiplexing loop
+				checkPendingRequestStatus();  
+				if (selector.selectNow() > 0) processSelectedKeys(selector.selectedKeys());
+			}
+			else{
+				onDisconnected();
+				//writeBuf.clear();
+				readBuf.clear();
+				if (channel != null) channel.close();
+				if (selector != null) selector.close();
+				LOG.info("Connection closed");
+				
 				try {
 					Thread.sleep(reconnectInterval);
 					if (reconnectInterval < MAXIMUM_RECONNECT_INTERVAL) reconnectInterval *= 2;
 					LOG.info("Reconnecting to " + address);
+					connectToServer();
 				} catch (InterruptedException e) {
-					break;
+					LOG.severe("Reconnection to server interrupted.");
 				}
 			}
 		} catch (Exception e) {
-			LOG.severe("Unrecoverable error");
+			LOG.severe("Connection thread exception");
 		}
 	}
 
