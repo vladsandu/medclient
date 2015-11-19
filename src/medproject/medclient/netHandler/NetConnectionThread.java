@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.logging.LogWriter;
+import medproject.medlibrary.concurrency.Request;
 
 public class NetConnectionThread implements Runnable{
 
@@ -47,6 +48,9 @@ public class NetConnectionThread implements Runnable{
 
 	private final DataLoader dataLoader;
 
+	private Request currentRequest;
+	private Boolean currentRequestSent = false;
+
 	public NetConnectionThread(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;
 		reader = new NetRead(dataLoader);
@@ -67,6 +71,7 @@ public class NetConnectionThread implements Runnable{
 	public void stop() {
 		LOG.info("Stopping connection thread");
 		selector.wakeup();
+		//TODO: CLose the thread
 	}
 
 	/**
@@ -82,7 +87,7 @@ public class NetConnectionThread implements Runnable{
 	 * @param buf
 	 */
 	protected void onConnected() throws Exception{
-
+		dataLoader.setConnectionStatus(true);
 	};
 
 	/**
@@ -151,12 +156,12 @@ public class NetConnectionThread implements Runnable{
 				reader.read(currentKey, readBuf, bytesIn);
 			}
 			else if (currentKey.isWritable()) {	
-				if(dataLoader.getCurrentRequestSent() == false)
-					if(sender.send(currentKey, dataLoader.getCurrentRequest(), bytesOut) == false){	
-						dataLoader.getPendingRequests().add(dataLoader.getCurrentRequest());	    			 
+				if(currentRequestSent == false)
+					if(sender.send(currentKey, currentRequest, bytesOut) == false){	
+						dataLoader.makeRequest(currentRequest);		 
 					}
 					else{
-						dataLoader.setCurrentRequestSent(true);	
+						currentRequestSent = true;	
 					}
 			}
 			if (currentKey.isAcceptable()) ;
@@ -170,13 +175,12 @@ public class NetConnectionThread implements Runnable{
 		synchronized(dataLoader.getPendingRequests()){
 			SelectionKey key = channel.keyFor(selector);
 
-			if(dataLoader.getCurrentRequestSent() && ! dataLoader.getPendingRequests().isEmpty()){
-				dataLoader.setCurrentRequest(dataLoader.getPendingRequests().get(0));
-				dataLoader.getPendingRequests().remove(0);
-				dataLoader.setCurrentRequestSent(false);
+			if(currentRequestSent && ! dataLoader.getPendingRequests().isEmpty()){
+				currentRequest = dataLoader.getPendingRequests().remove(0);
+				currentRequestSent = false;
 			}
 			//de jucat pe aici
-			if(dataLoader.getCurrentRequestSent() == false)
+			if(currentRequestSent == false)
 				key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE);
 			else{
 				key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_READ);
@@ -191,7 +195,6 @@ public class NetConnectionThread implements Runnable{
 			LOG.info("Connected to " + address);
 			key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_READ);
 			reconnectInterval = INITIAL_RECONNECT_INTERVAL;
-			dataLoader.setConnectionStatus(true);
 			onConnected();
 		}
 	}

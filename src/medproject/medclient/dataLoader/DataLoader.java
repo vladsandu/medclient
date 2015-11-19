@@ -22,8 +22,6 @@ public class DataLoader implements Runnable{
 	private final Thread thread;  
 	private final AtomicBoolean connectionStatus;
 	//TODO: Move connectionStatus to the connectionThread and callback methods etc.
-	private Request currentRequest;
-	private Boolean currentRequestSent = false;
 
 	private final List<Request> pendingRequests;
 	private final LinkedBlockingQueue<Request> completedRequests;
@@ -38,6 +36,7 @@ public class DataLoader implements Runnable{
 
 		pendingRequests = Collections.synchronizedList(new ArrayList<Request>());
 		completedRequests = new LinkedBlockingQueue<Request>();
+		
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
 	}
@@ -49,12 +48,10 @@ public class DataLoader implements Runnable{
 			Request request = null;
 			try {
 				request = completedRequests.take();
+				processCompletedRequest(request);
 			} catch (InterruptedException e) {
 				LOG.severe("Data Loader thread interrupted");
 			}
-
-			processCompletedRequest(request);
-
 		}
 	}
 
@@ -101,21 +98,5 @@ public class DataLoader implements Runnable{
 
 	public List<Request> getPendingRequests() {
 		return pendingRequests;
-	}
-
-	public Request getCurrentRequest() {
-		return currentRequest;
-	}
-
-	public void setCurrentRequest(Request currentRequest) {
-		this.currentRequest = currentRequest;
-	}
-
-	public Boolean getCurrentRequestSent() {
-		return currentRequestSent;
-	}
-
-	public void setCurrentRequestSent(Boolean currentRequestSent) {
-		this.currentRequestSent = currentRequestSent;
 	}
 }

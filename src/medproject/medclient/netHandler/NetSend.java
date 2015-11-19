@@ -32,7 +32,7 @@ public class NetSend {
 	      //LOG.info("peer closed write channel");
 	      ch.close();
 	    }
-	    System.out.println("Pachet trimis");
+	    
 	    return true;
 	    
 	}
