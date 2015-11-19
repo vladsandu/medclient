@@ -72,7 +72,7 @@ public class NetRead {
 			objectStream.close();
 			System.out.println("Request cerut: " + currentRequest.getREQUEST_CODE());
     
-			dataLoader.processNewRequest(currentRequest);
+			dataLoader.processReceivedRequest(currentRequest);
 			
 	    	currentMessageByteSize = 0;
 		}

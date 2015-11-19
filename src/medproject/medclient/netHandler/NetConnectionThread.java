@@ -6,13 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,7 +19,6 @@ import javax.annotation.PostConstruct;
 
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.logging.LogWriter;
-import medproject.medlibrary.concurrency.Request;
 
 public class NetConnectionThread implements Runnable{
 
@@ -162,9 +156,8 @@ public class NetConnectionThread implements Runnable{
 						dataLoader.getPendingRequests().add(dataLoader.getCurrentRequest());	    			 
 					}
 					else{
-						dataLoader.setCurrentRequestSent(true);
-						if(!dataLoader.getCurrentRequest().isWaitForReply())
-							dataLoader.setCurrentRequestCompleted(true);				}
+						dataLoader.setCurrentRequestSent(true);	
+					}
 			}
 			if (currentKey.isAcceptable()) ;
 
@@ -177,14 +170,13 @@ public class NetConnectionThread implements Runnable{
 		synchronized(dataLoader.getPendingRequests()){
 			SelectionKey key = channel.keyFor(selector);
 
-			if(dataLoader.getCurrentRequestCompleted() && ! dataLoader.getPendingRequests().isEmpty()){
+			if(dataLoader.getCurrentRequestSent() && ! dataLoader.getPendingRequests().isEmpty()){
 				dataLoader.setCurrentRequest(dataLoader.getPendingRequests().get(0));
 				dataLoader.getPendingRequests().remove(0);
-				dataLoader.setCurrentRequestCompleted(false);
 				dataLoader.setCurrentRequestSent(false);
 			}
 			//de jucat pe aici
-			if(dataLoader.getCurrentRequestCompleted() == false && dataLoader.getCurrentRequestSent() == false)
+			if(dataLoader.getCurrentRequestSent() == false)
 				key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE);
 			else{
 				key.interestOps(SelectionKey.OP_CONNECT | SelectionKey.OP_READ);
