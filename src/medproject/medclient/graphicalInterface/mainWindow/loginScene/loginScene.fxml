@@ -18,12 +18,11 @@
       <RowConstraints maxHeight="212.0" minHeight="10.0" prefHeight="55.0" vgrow="NEVER" />
     <RowConstraints maxHeight="214.0" minHeight="10.0" prefHeight="54.0" vgrow="NEVER" />
       <RowConstraints maxHeight="508.0" minHeight="10.0" prefHeight="72.0" vgrow="NEVER" />
-      <RowConstraints maxHeight="508.0" minHeight="10.0" prefHeight="65.0" vgrow="NEVER" />
   </rowConstraints>
    <children>
-      <Label text="Username:" GridPane.halignment="CENTER" />
+      <Label text="Operator:" GridPane.halignment="CENTER" />
       <Label text="Password:" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-      <TextField fx:id="username_field" promptText="username" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+      <TextField fx:id="operator_field" promptText="operator" GridPane.columnIndex="1" GridPane.halignment="CENTER">
          <GridPane.margin>
             <Insets right="5.0" />
          </GridPane.margin>
@@ -33,8 +32,7 @@
             <Insets right="5.0" />
          </GridPane.margin>
       </TextField>
-      <Button fx:id="login_button" disable="true" mnemonicParsing="false" onAction="#onLoginPress" prefHeight="25.0" prefWidth="121.0" text="Log in" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-      <Button alignment="CENTER" mnemonicParsing="false" onAction="#onRegisterPress" text="Register" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+      <Button fx:id="login_button" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginPress" prefHeight="25.0" prefWidth="121.0" text="Log in" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

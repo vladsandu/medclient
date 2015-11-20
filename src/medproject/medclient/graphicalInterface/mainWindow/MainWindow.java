@@ -18,7 +18,7 @@ public class MainWindow{
 	private ExecutorService updateExecutor;
 	
 	private Stage primaryWindow;
-	
+	//TODO: Consider refactoring the navigator
 	public void startWindow(DataLoader dataLoader) throws Exception {
 		this.updateExecutor = Executors.newSingleThreadScheduledExecutor();
 		this.dataLoader = dataLoader;
@@ -28,10 +28,9 @@ public class MainWindow{
 
 	public void start() throws Exception {
 		primaryWindow = new Stage();
-		primaryWindow.setTitle("Messenger");
+		primaryWindow.setTitle("Med Client");//TODO: Constants class refactoring
         primaryWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                System.out.println("Stage is closing");
                 stop();
             }
         });  
@@ -62,7 +61,7 @@ public class MainWindow{
 			future.get();
 		}
 		catch (InterruptedException | ExecutionException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(e);//FIXME: refactor
 		}
 	}
 	

@@ -29,6 +29,8 @@ public class DataLoader implements Runnable{
 	private final NetConnectionThread connectionThread;
 	private final MainWindow mainWindow;
 
+	private final LoginLoader loginLoader;
+	
 	public DataLoader(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 		connectionThread = new NetConnectionThread(this);
@@ -37,8 +39,11 @@ public class DataLoader implements Runnable{
 		pendingRequests = Collections.synchronizedList(new ArrayList<Request>());
 		completedRequests = new LinkedBlockingQueue<Request>();
 		
+		loginLoader = new LoginLoader(this);
+		
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
+		
 	}
 
 	@Override
@@ -55,6 +60,12 @@ public class DataLoader implements Runnable{
 		}
 	}
 
+	public void makeLoginRequest(String operatorName, char[] password){
+		//FIXME: USe PBKDF2 to encrypt the password at entry and store the password in its encrypted state.
+		//FIXME: Overwrite password array with useless things in order to delete it from RAM. (An immutable string gets garbage collected)
+		makeRequest(new Request(RequestCodes.OPERATOR_LOOKUP_REQUEST, operatorName));
+	}
+	
 	public void makeRequest(Request request){
 		pendingRequests.add(request);
 	}
@@ -65,8 +76,11 @@ public class DataLoader implements Runnable{
 	 */
 
 	private void processCompletedRequest(Request request) {
-
-
+		switch(RequestCodes.getRequestType(request)){
+		case RequestCodes.LOGIN_REQUEST:
+			loginLoader.processRequest(request);
+			break;
+		}
 	}
 
 	public void processReceivedRequest(Request processingRequest){

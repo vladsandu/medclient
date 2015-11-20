@@ -7,14 +7,20 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
+import medproject.medclient.logging.LogWriter;
 import medproject.medlibrary.concurrency.Request;
 
 public class NetSend {
 
+	private Logger LOG = LogWriter.getLogger(this.getClass().getName());
 	private int bytesForMessageSize = 8;
 	
 	boolean send(SelectionKey key, Request currentRequest, AtomicLong bytesOut) throws IOException{
+		if(currentRequest == null)
+			return true;
+		
 		ByteBuffer finalBuffer = requestToByteBuffer(currentRequest);
 		
 		WritableByteChannel ch = (WritableByteChannel)key.channel();
@@ -33,6 +39,7 @@ public class NetSend {
 	      ch.close();
 	    }
 	    
+	    LOG.info("Request sent");
 	    return true;
 	    
 	}

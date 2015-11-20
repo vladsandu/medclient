@@ -16,14 +16,13 @@ public class LoginController implements ControllerInterface{
 	
 	private boolean isRunning = true;
 	
-	@FXML private TextField username_field;
+	@FXML private TextField operator_field;
 	@FXML private TextField password_field;
 	@FXML private Button login_button;
-	
+	//TODO: Check if things are entered in the fields before enabling
 	@FXML protected void onLoginPress(){
-	}
-
-	@FXML protected void onRegisterPress(){
+		//encryption here
+		dataLoader.makeLoginRequest(operator_field.getText(), password_field.getText().toCharArray());
 	}
 
 	@Override

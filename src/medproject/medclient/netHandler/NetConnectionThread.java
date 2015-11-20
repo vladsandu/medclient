@@ -48,8 +48,8 @@ public class NetConnectionThread implements Runnable{
 
 	private final DataLoader dataLoader;
 
-	private Request currentRequest;
-	private Boolean currentRequestSent = false;
+	private Request currentRequest = null;
+	private Boolean currentRequestSent = true;
 
 	public NetConnectionThread(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;

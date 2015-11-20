@@ -32,11 +32,11 @@ public class Navigator {
 			FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
 			Pane pane = (Pane) loader.load();
 			Scene scene = new Scene(pane);
-			mainWindow.setScene(scene);
-
+			
 			ControllerInterface currentController = (ControllerInterface)loader.getController();
 			currentController.init(mainWindow.getDataLoader(), mainWindow.getUpdateExecutor());
 
+			mainWindow.setScene(scene);
 		} catch (IOException e) {
 			LOG.severe("Cannot find fxml file location for value: " + fxml);
 		}
