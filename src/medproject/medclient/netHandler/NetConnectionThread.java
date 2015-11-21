@@ -50,7 +50,8 @@ public class NetConnectionThread implements Runnable{
 
 	private Request currentRequest = null;
 	private Boolean currentRequestSent = true;
-
+	private Boolean currentRequestCompleted = true;
+	
 	public NetConnectionThread(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;
 		reader = new NetRead(dataLoader);
@@ -158,10 +159,13 @@ public class NetConnectionThread implements Runnable{
 			else if (currentKey.isWritable()) {	
 				if(currentRequestSent == false)
 					if(sender.send(currentKey, currentRequest, bytesOut) == false){	
-						dataLoader.makeRequest(currentRequest);		 
+						dataLoader.makeRequest(currentRequest);
 					}
 					else{
 						currentRequestSent = true;	
+						
+						if(!currentRequest.isWaitForReply())
+							currentRequestCompleted = true;
 					}
 			}
 			if (currentKey.isAcceptable()) ;
@@ -175,9 +179,10 @@ public class NetConnectionThread implements Runnable{
 		synchronized(dataLoader.getPendingRequests()){
 			SelectionKey key = channel.keyFor(selector);
 
-			if(currentRequestSent && ! dataLoader.getPendingRequests().isEmpty()){
+			if(currentRequestCompleted && currentRequestSent && ! dataLoader.getPendingRequests().isEmpty()){
 				currentRequest = dataLoader.getPendingRequests().remove(0);
 				currentRequestSent = false;
+				currentRequestCompleted = false;
 			}
 			//de jucat pe aici
 			if(currentRequestSent == false)
@@ -211,4 +216,11 @@ public class NetConnectionThread implements Runnable{
 		return bytesIn.get();
 	}
 
+	public void setCurrentRequestCompleted(Boolean currentRequestCompleted) {
+		this.currentRequestCompleted = currentRequestCompleted;
+	}
+
+	public Request getCurrentRequest() {
+		return currentRequest;
+	}
 }

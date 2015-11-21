@@ -7,11 +7,15 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 import medproject.medclient.dataLoader.DataLoader;
+import medproject.medclient.logging.LogWriter;
 import medproject.medlibrary.concurrency.Request;
 
 public class NetRead {
+	
+	private final Logger LOG = LogWriter.getLogger(this.getClass().getName());
 	
 	DataLoader dataLoader;
 	private int bytesForMessageSize = 8;
@@ -63,14 +67,14 @@ public class NetRead {
 			byte[] packetBytes = new byte[currentMessageByteSize];
 			readBuf.position(bytesForMessageSize);
 			readBuf.get(packetBytes,0,packetBytes.length);		
-			System.out.println("Pachet primit: " + packetBytes.length);
+			LOG.info("Pachet primit: " + packetBytes.length);
 			 
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(packetBytes);
 			ObjectInputStream objectStream = new ObjectInputStream(inputStream);
 			   
 			Request currentRequest = (Request) objectStream.readObject();
 			objectStream.close();
-			System.out.println("Request cerut: " + currentRequest.getREQUEST_CODE());
+			LOG.info("Request cerut: " + currentRequest.getREQUEST_CODE());
     
 			dataLoader.processReceivedRequest(currentRequest);
 			
