@@ -15,6 +15,7 @@ public class MainClient extends Application{
 	public void start(Stage primaryWindow) throws Exception {
 
 		LogWriter.useFileLogging();
+		LogWriter.setDebugMode(true);
 		
 		final MainWindow mainWindow = new MainWindow();
 
