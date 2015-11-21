@@ -22,7 +22,7 @@ public class LoginController implements ControllerInterface{
 	//TODO: Check if things are entered in the fields before enabling
 	@FXML protected void onLoginPress(){
 		//encryption here
-		dataLoader.makeLoginRequest(operator_field.getText(), password_field.getText().toCharArray());
+		dataLoader.makeLoginRequest(operator_field.getText(), password_field.getText());
 	}
 
 	@Override
