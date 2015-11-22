@@ -33,7 +33,8 @@ public class DataLoader implements Runnable{
 
 	private final InitialLoader initialLoader;
 	private final LoginLoader loginLoader;
-
+	private final PatientLoader patientLoader;
+	
 	public DataLoader(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 		connectionThread = new NetConnectionThread(this);
@@ -45,7 +46,8 @@ public class DataLoader implements Runnable{
 
 		initialLoader = new InitialLoader(this);
 		loginLoader = new LoginLoader(this);
-
+		patientLoader = new PatientLoader(this);
+		
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
 
@@ -90,6 +92,9 @@ public class DataLoader implements Runnable{
 		switch(RequestCodes.getRequestType(request)){
 		case RequestCodes.LOGIN_TYPE_REQUEST:
 			loginLoader.processRequest(request);
+			break;
+		case RequestCodes.PATIENT_TYPE_REQUEST:
+			patientLoader.processRequest(request);
 			break;
 		}
 	}
