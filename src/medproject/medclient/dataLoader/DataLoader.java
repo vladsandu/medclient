@@ -10,13 +10,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
-import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
-import medproject.medlibrary.account.LoginStructure;
-import medproject.medlibrary.account.OperatorType;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.patient.Patient;
 
 public class DataLoader implements Runnable{
 
@@ -36,6 +34,8 @@ public class DataLoader implements Runnable{
 	private final LoginLoader loginLoader;
 	private final PatientLoader patientLoader;
 
+	private final List<Patient> patientList;
+	
 	public DataLoader(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 		connectionThread = new NetConnectionThread(this);
@@ -44,16 +44,29 @@ public class DataLoader implements Runnable{
 		pendingRequests = Collections.synchronizedList(new ArrayList<Request>());
 		completedRequests = new LinkedBlockingQueue<Request>();
 
-
 		initialLoader = new InitialLoader(this);
 		loginLoader = new LoginLoader(this);
 		patientLoader = new PatientLoader(this);
 
+		patientList = Collections.synchronizedList(new ArrayList<Patient>());
+		
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
 
 	}
 
+	public void start() throws IOException{	
+		LOG.info("Starting data loader");
+		thread.start();
+		connectionThread.start();
+	}
+
+	public void stop(){
+		LOG.info("Stopping data loader");
+		thread.interrupt();
+		connectionThread.stop();
+	}
+	
 	@Override
 	public void run(){
 
@@ -66,10 +79,6 @@ public class DataLoader implements Runnable{
 				LOG.severe("Data Loader thread interrupted");
 			}
 		}
-	}
-
-	public void makeLoginRequest(String operatorName, String password){
-		loginLoader.makeLoginRequest(operatorName, password);
 	}
 
 	public void makeRequest(Request request){
@@ -101,22 +110,22 @@ public class DataLoader implements Runnable{
 		completedRequests.add(processingRequest);
 	}
 
+	public void makeLoginRequest(String operatorName, String password){
+		loginLoader.makeLoginRequest(operatorName, password);
+	}
+
 	public void makeWindowRequest(Runnable runnable){
 		mainWindow.runAndWait(runnable);
 	}
 
-	public void start() throws IOException{	
-		LOG.info("Starting data loader");
-		thread.start();
-		connectionThread.start();
+	public void addPatient(Patient patient){
+		patientList.add(patient);
 	}
-
-	public void stop(){
-		LOG.info("Stopping data loader");
-		thread.interrupt();
-		connectionThread.stop();
+	
+	public List<Patient> getPatientList(){
+		return patientList;
 	}
-
+	
 	public boolean getConnectionStatus(){
 		return connectionStatus.get();
 	}
@@ -131,6 +140,10 @@ public class DataLoader implements Runnable{
 
 	public InitialLoader getInitialLoader() {
 		return initialLoader;
+	}
+
+	public PatientLoader getPatientLoader() {
+		return patientLoader;
 	}
 
 	public MainWindow getMainWindow() {

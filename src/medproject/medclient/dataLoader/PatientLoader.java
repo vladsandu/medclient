@@ -1,10 +1,13 @@
 package medproject.medclient.dataLoader;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import medproject.medclient.logging.LogWriter;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.concurrency.RequestStatus;
+import medproject.medlibrary.patient.Patient;
 
 public class PatientLoader {
 	private final Logger LOG = LogWriter.getLogger(this.getClass().getName());
@@ -22,9 +25,23 @@ public class PatientLoader {
 		}
 	}
 
+	public void loadPatientList(){
+		dataLoader.makeRequest(new Request(RequestCodes.PATIENT_LIST_REQUEST, null));
+	}
+	
+	@SuppressWarnings("unchecked")
 	private void processPatientListRequest(Request request) {
-		// TODO Auto-generated method stub
+		LOG.info(request.getMessage());
 		
+		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
+			List<Patient> patientList = (List<Patient>) request.getDATA();
+			
+			for(Patient patient : patientList)
+				dataLoader.addPatient(patient);
+		}
+		else{
+			
+		}
 	}
 
 }

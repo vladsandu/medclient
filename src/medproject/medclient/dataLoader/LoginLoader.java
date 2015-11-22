@@ -37,7 +37,7 @@ public class LoginLoader {
 	private void processLoginRequest(Request request) {
 		LOG.info(request.getMessage());
 		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
-			dataLoader.makeInitialLoadingRequest();
+			dataLoader.getInitialLoader().loadData();
 		}
 		else{
 			//error operator doesn't exist
