@@ -2,8 +2,8 @@ package medproject.medclient.dataLoader;
 
 import java.util.logging.Logger;
 
+import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 import medproject.medclient.logging.LogWriter;
-import medproject.medlibrary.account.LoginStructure;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
 import medproject.medlibrary.concurrency.RequestStatus;
@@ -28,6 +28,14 @@ public class LoginLoader {
 		LOG.info(request.getMessage());
 		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
 			dataLoader.makeInitialLoadingRequest();
+			dataLoader.makeWindowRequest(new Runnable(){
+
+				@Override
+				public void run() {
+					Navigator.loadScene(Navigator.LOADING_SCENE);
+				}
+				
+			});
 		}
 		else{
 			//error operator doesn't exist

@@ -1,0 +1,14 @@
+Nov 21, 2015 7:03:21 PM medproject.medclient.dataLoader.DataLoader start
+INFO: Starting data loader
+Nov 21, 2015 7:03:21 PM medproject.medclient.netHandler.NetConnectionThread start
+INFO: Starting connection thread
+Nov 21, 2015 7:03:21 PM medproject.medclient.netHandler.NetConnectionThread processConnect
+INFO: Connected to localhost/127.0.0.1:1338
+Nov 21, 2015 7:03:30 PM medproject.medclient.netHandler.NetSend send
+INFO: Request sent
+Nov 21, 2015 7:03:31 PM medproject.medclient.netHandler.NetRead read
+INFO: Pachet primit: 351
+Nov 21, 2015 7:03:31 PM medproject.medclient.netHandler.NetRead read
+INFO: Request cerut: 3
+Nov 21, 2015 7:03:31 PM medproject.medclient.dataLoader.LoginLoader processLoginRequest
+INFO: Login successful

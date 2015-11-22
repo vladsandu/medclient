@@ -14,6 +14,7 @@ public class Navigator {
 	private static final Logger LOG = LogWriter.getLogger("Navigator");
 
 	public static final String LOGIN_SCENE = "./loginScene/loginScene.fxml";
+	public static final String LOADING_SCENE = "./loadingScene/loadingScene.fxml";
 
 	private static MainWindow mainWindow = null;
 	

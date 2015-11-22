@@ -103,9 +103,10 @@ public class DataLoader implements Runnable{
 		completedRequests.add(processingRequest);
 	}
 
-	public void checkLoginWindowConnection(){
+	public void makeWindowRequest(Runnable runnable){
+		mainWindow.runAndWait(runnable);
 	}
-
+	
 	public void start() throws IOException{	
 		LOG.info("Starting data loader");
 		thread.start();
@@ -134,4 +135,7 @@ public class DataLoader implements Runnable{
 		return initialLoader;
 	}
 
+	public MainWindow getMainWindow() {
+		return mainWindow;
+	}
 }
