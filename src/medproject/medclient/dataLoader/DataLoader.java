@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
+import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
 import medproject.medlibrary.account.LoginStructure;
@@ -34,7 +35,7 @@ public class DataLoader implements Runnable{
 	private final InitialLoader initialLoader;
 	private final LoginLoader loginLoader;
 	private final PatientLoader patientLoader;
-	
+
 	public DataLoader(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 		connectionThread = new NetConnectionThread(this);
@@ -47,7 +48,7 @@ public class DataLoader implements Runnable{
 		initialLoader = new InitialLoader(this);
 		loginLoader = new LoginLoader(this);
 		patientLoader = new PatientLoader(this);
-		
+
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
 
@@ -68,15 +69,7 @@ public class DataLoader implements Runnable{
 	}
 
 	public void makeLoginRequest(String operatorName, String password){
-		//FIXME: USe PBKDF2 to encrypt the password at entry and store the password in its encrypted state.
-		//FIXME: Overwrite password array with useless things in order to delete it from RAM. (An immutable string gets garbage collected)
-		//FIXME: Do the operator type in the settings
-		makeRequest(new Request(RequestCodes.LOGIN_REQUEST, 
-				new LoginStructure(operatorName, password, OperatorType.MEDIC.getOperatorID())).setWaitForReply(true));
-	}
-
-	public void makeInitialLoadingRequest(){
-
+		loginLoader.makeLoginRequest(operatorName, password);
 	}
 
 	public void makeRequest(Request request){
@@ -111,7 +104,7 @@ public class DataLoader implements Runnable{
 	public void makeWindowRequest(Runnable runnable){
 		mainWindow.runAndWait(runnable);
 	}
-	
+
 	public void start() throws IOException{	
 		LOG.info("Starting data loader");
 		thread.start();
