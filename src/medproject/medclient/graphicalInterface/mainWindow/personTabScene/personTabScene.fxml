@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="medproject.medclient.graphicalInterface.mainWindow.personTabScene.PersonTabController">
+   <children>
+      <VBox maxHeight="1.7976931348623157E308" prefWidth="100.0" />
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+               <content>
+                  <TableView fx:id="patientTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <columns>
+                      <TableColumn fx:id="cnpColumn" editable="false" prefWidth="75.0" text="CNP" />
+                      <TableColumn fx:id="firstNameColumn" editable="false" prefWidth="75.0" text="Nume" />
+                        <TableColumn fx:id="lastNameColumn" editable="false" prefWidth="75.0" text="Prenume" />
+                        <TableColumn fx:id="genderColumn" editable="false" prefWidth="75.0" text="Sex" />
+                        <TableColumn fx:id="categoryColumn" editable="false" prefWidth="75.0" text="Categorie" />
+                        <TableColumn fx:id="birthDateColumn" editable="false" prefWidth="94.0" text="Data Nastere" />
+                        <TableColumn fx:id="deceaseDateColumn" editable="false" prefWidth="75.0" text="Data Deces" />
+                        <TableColumn fx:id="enlistingDateColumn" editable="false" prefWidth="75.0" text="Data Inscriere" />
+                        <TableColumn fx:id="delistingDateColumn" editable="false" prefWidth="75.0" text="Data Iesire" />
+                        <TableColumn fx:id="countyColumn" editable="false" prefWidth="75.0" text="Judet" />
+                        <TableColumn fx:id="cityColumn" editable="false" prefWidth="75.0" text="Localitate" />
+                    </columns>
+                  </TableView>
+               </content>
+            </ScrollPane>
+         </children>
+      </HBox>
+   </children>
+</HBox>
