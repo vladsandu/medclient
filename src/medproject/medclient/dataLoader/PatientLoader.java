@@ -38,6 +38,8 @@ public class PatientLoader {
 			
 			for(Patient patient : patientList)
 				dataLoader.addPatient(patient);
+			
+			dataLoader.getInitialLoader().setPatientsLoaded(true);
 		}
 		else{
 			

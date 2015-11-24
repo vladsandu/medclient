@@ -9,6 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
@@ -34,7 +36,7 @@ public class DataLoader implements Runnable{
 	private final LoginLoader loginLoader;
 	private final PatientLoader patientLoader;
 
-	private final List<Patient> patientList;
+	private final ObservableList<Patient> patientList;
 	
 	public DataLoader(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
@@ -48,7 +50,7 @@ public class DataLoader implements Runnable{
 		loginLoader = new LoginLoader(this);
 		patientLoader = new PatientLoader(this);
 
-		patientList = Collections.synchronizedList(new ArrayList<Patient>());
+		patientList = FXCollections.observableArrayList();
 		
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
@@ -122,7 +124,7 @@ public class DataLoader implements Runnable{
 		patientList.add(patient);
 	}
 	
-	public List<Patient> getPatientList(){
+	public ObservableList<Patient> getPatientList(){
 		return patientList;
 	}
 	
@@ -149,4 +151,5 @@ public class DataLoader implements Runnable{
 	public MainWindow getMainWindow() {
 		return mainWindow;
 	}
+	
 }
