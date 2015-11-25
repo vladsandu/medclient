@@ -18,6 +18,8 @@ public class Navigator {
 	public static final String MAIN_SCENE = "./mainScene/mainScene.fxml";
 	public static final String PERSON_TAB_SCENE = "./personTabScene/personTabScene.fxml";
 
+	private static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
+	
 	private static MainWindow mainWindow = null;
 	private static String currentScene = "";
 	private static ControllerInterface currentController = null;
@@ -40,7 +42,7 @@ public class Navigator {
 					FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
 					Pane pane = (Pane) loader.load();
 					Scene scene = new Scene(pane);
-
+					scene.getStylesheets().add(DEFAULT_STYLESHEET);
 					ControllerInterface currentController = (ControllerInterface)loader.getController();
 					currentController.init(mainWindow.getDataLoader(), mainWindow.getUpdateExecutor());
 					
@@ -70,6 +72,7 @@ public class Navigator {
 		
 		return pane;
 	}
+	
 		
 	public static String getCurrentScene() {
 		return currentScene;
