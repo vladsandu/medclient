@@ -31,6 +31,7 @@ public class PersonTabController implements ControllerInterface{
 	@FXML TableColumn<Patient, String> delistingDateColumn;
 	@FXML TableColumn<Patient, String> countyColumn;
 	@FXML TableColumn<Patient, String> cityColumn;
+	@FXML TableColumn<Patient, String> streetColumn;
 	
 	@Override
 	public void init(DataLoader dataLoader, ExecutorService executor) {
@@ -45,25 +46,25 @@ public class PersonTabController implements ControllerInterface{
 	private void setColumnValues(){
 		cnpColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getCNP());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getCNP());
 		     }
 		  });
 		
 		firstNameColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getFirstName());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getFirstName());
 		     }
 		  });
 		
 		lastNameColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getLastName());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getLastName());
 		     }
 		  });
 		
 		genderColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getGender());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getSex());
 		     }
 		  });
 		
@@ -75,26 +76,45 @@ public class PersonTabController implements ControllerInterface{
 
 		birthDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getBirthDate());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getBirthDateString());
 		     }
 		  });
 		
 		deceaseDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getDeceaseDate());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getDeceaseDateString());
 		     }
 		  });
 
 		enlistingDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getEnlistingDate());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getListingRecord().getEnlistingDateString());
 		     }
 		  });
 		
 		delistingDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getDelistingDate());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getListingRecord().getDelistingDateString());
 		     }
 		  });
+		
+		countyColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
+		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getAddress().getCounty());
+		     }
+		  });
+		
+		cityColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
+		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getAddress().getCity());
+		     }
+		  });
+		
+		streetColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
+		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getAddress().getStreet());
+		     }
+		  });
+		
 	}
 }
