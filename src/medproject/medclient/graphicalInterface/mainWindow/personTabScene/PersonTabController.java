@@ -19,6 +19,7 @@ public class PersonTabController implements ControllerInterface{
 	private DataLoader dataLoader;
 	private ExecutorService executor;
 
+	//TODO: Customize cell style according to the patient.
 	@FXML TableView<Patient> patientTable;
 	@FXML TableColumn<Patient, String> cnpColumn;
 	@FXML TableColumn<Patient, String> firstNameColumn;
@@ -27,8 +28,8 @@ public class PersonTabController implements ControllerInterface{
 	@FXML TableColumn<Patient, String> categoryColumn;
 	@FXML TableColumn<Patient, String> birthDateColumn;
 	@FXML TableColumn<Patient, String> deceaseDateColumn;
-	@FXML TableColumn<Patient, String> enlistingDateColumn;
-	@FXML TableColumn<Patient, String> delistingDateColumn;
+	@FXML TableColumn<Patient, String> registrationDateColumn;
+	@FXML TableColumn<Patient, String> unregistrationDateColumn;
 	@FXML TableColumn<Patient, String> countyColumn;
 	@FXML TableColumn<Patient, String> cityColumn;
 	@FXML TableColumn<Patient, String> streetColumn;
@@ -86,15 +87,15 @@ public class PersonTabController implements ControllerInterface{
 		     }
 		  });
 
-		enlistingDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
+		registrationDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getListingRecord().getEnlistingDateString());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getRegistrationRecord().getRegistrationDateString());
 		     }
 		  });
 		
-		delistingDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
+		unregistrationDateColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-		         return new ReadOnlyObjectWrapper<String>(p.getValue().getListingRecord().getDelistingDateString());
+		         return new ReadOnlyObjectWrapper<String>(p.getValue().getRegistrationRecord().getUnregistrationDateString());
 		     }
 		  });
 		

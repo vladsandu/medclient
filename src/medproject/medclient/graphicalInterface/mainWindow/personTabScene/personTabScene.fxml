@@ -62,7 +62,7 @@
                <children>
                   <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <RadioButton mnemonicParsing="false" text="Toti">
+                        <RadioButton fx:id="allInsuredPatientRadio" mnemonicParsing="false" text="Toti">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -70,14 +70,14 @@
                               <Insets right="15.0" />
                            </padding>
                         </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="Asigurati" />
-                        <RadioButton mnemonicParsing="false" text="Neasigurati" />
+                        <RadioButton fx:id="insuredPatientRadio" mnemonicParsing="false" text="Asigurati" />
+                        <RadioButton fx:id="uninsuredPatientRadio" mnemonicParsing="false" text="Neasigurati" />
                      </children>
                   </HBox>
                   <Region maxWidth="1.7976931348623157E308" prefHeight="200.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <RadioButton mnemonicParsing="false" text="Toti">
+                        <RadioButton fx:id="allRegisteredPatientRadio" mnemonicParsing="false" text="Toti">
                            <padding>
                               <Insets right="15.0" />
                            </padding>
@@ -102,8 +102,8 @@
                         <TableColumn fx:id="categoryColumn" editable="false" prefWidth="75.0" text="Categorie" />
                         <TableColumn fx:id="birthDateColumn" editable="false" prefWidth="94.0" text="Data Nastere" />
                         <TableColumn fx:id="deceaseDateColumn" editable="false" prefWidth="75.0" text="Data Deces" />
-                        <TableColumn fx:id="enlistingDateColumn" editable="false" prefWidth="75.0" text="Data Inscriere" />
-                        <TableColumn fx:id="delistingDateColumn" editable="false" prefWidth="75.0" text="Data Iesire" />
+                        <TableColumn fx:id="registrationDateColumn" editable="false" prefWidth="75.0" text="Data Inscriere" />
+                        <TableColumn fx:id="unregistrationDateColumn" editable="false" prefWidth="75.0" text="Data Iesire" />
                         <TableColumn fx:id="countyColumn" editable="false" prefWidth="75.0" text="Judet" />
                         <TableColumn fx:id="cityColumn" editable="false" prefWidth="75.0" text="Localitate" />
                         <TableColumn fx:id="streetColumn" prefWidth="75.0" text="Strada" />
