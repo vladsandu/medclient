@@ -1,6 +1,7 @@
 package medproject.medclient._clientRunner;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,6 +12,8 @@ import medproject.medclient.logging.LogWriter;
 
 public class MainClient extends Application{	
 
+	private static final Logger LOG = LogWriter.getLogger(MainClient.class.getName());
+	
 	@Override
 	public void start(Stage primaryWindow) throws Exception {
 
@@ -26,7 +29,7 @@ public class MainClient extends Application{
 			dataLoader.start();
 			mainWindow.startWindow(dataLoader);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.severe("Fatal Error: " + e.getMessage());
 		}
 
 	}
