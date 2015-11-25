@@ -82,8 +82,8 @@
                               <Insets right="15.0" />
                            </padding>
                         </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="Inscrisi" />
-                        <RadioButton mnemonicParsing="false" text="Neinscrisi" />
+                        <RadioButton fx:id="registeredPatientRadio" mnemonicParsing="false" text="Inscrisi" />
+                        <RadioButton fx:id="unregisteredPatientRadio" mnemonicParsing="false" text="Neinscrisi" />
                      </children>
                   </HBox>
                </children>

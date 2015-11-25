@@ -5,14 +5,15 @@ import java.util.concurrent.ExecutorService;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleGroup;
 import javafx.util.Callback;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
 import medproject.medlibrary.patient.Patient;
-import medproject.medlibrary.patient.PatientCategory;
 
 public class PersonTabController implements ControllerInterface{
 
@@ -34,16 +35,39 @@ public class PersonTabController implements ControllerInterface{
 	@FXML TableColumn<Patient, String> cityColumn;
 	@FXML TableColumn<Patient, String> streetColumn;
 	
+	@FXML RadioButton allInsuredPatientRadio;
+	@FXML RadioButton insuredPatientRadio;
+	@FXML RadioButton uninsuredPatientRadio;
+	@FXML RadioButton allRegisteredPatientRadio;
+	@FXML RadioButton registeredPatientRadio;
+	@FXML RadioButton unregisteredPatientRadio;
+	
+	private ToggleGroup insuredRadioGroup, registeredRadioGroup;
+	
 	@Override
 	public void init(DataLoader dataLoader, ExecutorService executor) {
 		this.dataLoader = dataLoader;
 		this.executor = executor;
-
+	
 		patientTable.setItems(dataLoader.getPatientList());
 		patientTable.setEditable(false);
 		setColumnValues();
+		setRadioButtonGroups();
 	}
 	
+	private void setRadioButtonGroups() {
+		this.insuredRadioGroup = new ToggleGroup();
+		this.registeredRadioGroup = new ToggleGroup();
+		
+		allInsuredPatientRadio.setToggleGroup(insuredRadioGroup);
+		insuredPatientRadio.setToggleGroup(insuredRadioGroup);
+		uninsuredPatientRadio.setToggleGroup(insuredRadioGroup);
+		
+		allRegisteredPatientRadio.setToggleGroup(registeredRadioGroup);
+		registeredPatientRadio.setToggleGroup(registeredRadioGroup);
+		unregisteredPatientRadio.setToggleGroup(registeredRadioGroup);
+	}
+
 	private void setColumnValues(){
 		cnpColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 		     public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
