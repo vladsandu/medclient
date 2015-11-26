@@ -10,44 +10,44 @@
       <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="140.0" spacing="8.0" HBox.hgrow="ALWAYS">
          <children>
             <Label text="Cauta:" />
-            <TextField />
-            <ChoiceBox prefWidth="150.0" />
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Adauga persoana" textAlignment="CENTER">
+            <TextField fx:id="patientSearchField" />
+            <ChoiceBox fx:id="searchTypeBox" prefWidth="150.0" />
+            <Button fx:id="adaugaPersoanaButton" mnemonicParsing="false" onAction="#onPressAdaugaPersoana" prefHeight="30.0" prefWidth="120.0" text="Adauga persoana" textAlignment="CENTER">
                <VBox.margin>
                   <Insets top="20.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Modifica persoana" textAlignment="CENTER">
+            <Button fx:id="modificaPersoanaButton" mnemonicParsing="false" onAction="#onPressModificaPersoana" prefHeight="30.0" prefWidth="120.0" text="Modifica persoana" textAlignment="CENTER">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Sterge persoana" textAlignment="CENTER">
+            <Button fx:id="stergePersoanaButton" mnemonicParsing="false" onAction="#onPressStergePersoana" prefHeight="30.0" prefWidth="120.0" text="Sterge persoana" textAlignment="CENTER">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Reinscriere" textAlignment="CENTER">
+            <Button fx:id="reinscriereButton" mnemonicParsing="false" onAction="#onPressReinscriere" prefHeight="30.0" prefWidth="120.0" text="Reinscriere" textAlignment="CENTER">
                <VBox.margin>
                   <Insets top="20.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Iesire" textAlignment="CENTER">
+            <Button fx:id="iesireButton" mnemonicParsing="false" onAction="#onPressIesire" prefHeight="30.0" prefWidth="120.0" text="Iesire" textAlignment="CENTER">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Deces persoana" textAlignment="CENTER">
+            <Button fx:id="decesPersoanaButton" mnemonicParsing="false" onAction="#onPressDecesPersoana" prefHeight="30.0" prefWidth="120.0" text="Deces persoana" textAlignment="CENTER">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Tiparire" textAlignment="CENTER">
+            <Button fx:id="tiparireButton" mnemonicParsing="false" onAction="#onPressTiparire" prefHeight="30.0" prefWidth="120.0" text="Tiparire" textAlignment="CENTER">
                <VBox.margin>
                   <Insets top="20.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Export" textAlignment="CENTER">
+            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#onPressExport" prefHeight="30.0" prefWidth="120.0" text="Export" textAlignment="CENTER">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
