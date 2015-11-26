@@ -12,7 +12,6 @@ import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 public class LoginController implements ControllerInterface{
 
 	DataLoader dataLoader;
-	ExecutorService executor;
 	
 	private boolean isRunning = true;
 	
@@ -26,9 +25,8 @@ public class LoginController implements ControllerInterface{
 	}
 
 	@Override
-	public void init(DataLoader dataLoader, ExecutorService executor) {
+	public void init(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;
-		this.executor = executor;
 	}
 	
 }

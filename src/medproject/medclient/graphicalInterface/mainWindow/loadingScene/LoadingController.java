@@ -19,13 +19,12 @@ import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 public class LoadingController implements ControllerInterface{
 
 	DataLoader dataLoader;
-	ExecutorService executor;
 
 	@FXML private ProgressBar progress_bar;
 	@FXML private Label message_label;
 
 	@Override
-	public void init(final DataLoader dataLoader, ExecutorService executor) {
+	public void init(final DataLoader dataLoader) {
 		// TODO Auto-generated method stub
 	}
 	

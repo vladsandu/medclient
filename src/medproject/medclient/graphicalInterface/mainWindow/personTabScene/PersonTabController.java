@@ -16,12 +16,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.util.Callback;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
+import medproject.medlibrary.concurrency.PacientRecordListTask;
 import medproject.medlibrary.patient.Patient;
 
 public class PersonTabController implements ControllerInterface{
 
 	private DataLoader dataLoader;
-	private ExecutorService executor;
 
 	//TODO: Customize cell style according to the patient.
 	@FXML TableView<Patient> patientTable;
@@ -60,9 +60,8 @@ public class PersonTabController implements ControllerInterface{
 	private ToggleGroup insuredRadioGroup, registeredRadioGroup;
 
 	@Override
-	public void init(DataLoader dataLoader, ExecutorService executor) {
+	public void init(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;
-		this.executor = executor;
 
 		patientTable.setItems(dataLoader.getPatientList());
 		patientTable.setEditable(false);

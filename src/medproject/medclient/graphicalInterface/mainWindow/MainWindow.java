@@ -16,12 +16,10 @@ import medproject.medclient.graphicalInterface.mainWindow.loadingScene.LoadingCo
 public class MainWindow{
 	
 	public DataLoader dataLoader;
-	private ExecutorService updateExecutor;
 	
 	private Stage primaryWindow;
 	//TODO: Consider refactoring the navigator
 	public void startWindow(DataLoader dataLoader) throws Exception {
-		this.updateExecutor = Executors.newSingleThreadScheduledExecutor();
 		this.dataLoader = dataLoader;
 		Navigator.setMainWindow(this);
 		start();
@@ -42,7 +40,6 @@ public class MainWindow{
 	public void stop(){
 		dataLoader.stop();
 		primaryWindow.close();
-		updateExecutor.shutdown();
 		Platform.exit();
 		System.exit(0);
 	}
@@ -97,10 +94,6 @@ public class MainWindow{
 	
 	public void setScene(Scene scene){
 		primaryWindow.setScene(scene);
-	}
-	
-	public ExecutorService getUpdateExecutor() {
-		return updateExecutor;
 	}
 
 	public DataLoader getDataLoader() {

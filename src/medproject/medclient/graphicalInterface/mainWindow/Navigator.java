@@ -44,7 +44,7 @@ public class Navigator {
 					Scene scene = new Scene(pane);
 					scene.getStylesheets().add(DEFAULT_STYLESHEET);
 					ControllerInterface currentController = (ControllerInterface)loader.getController();
-					currentController.init(mainWindow.getDataLoader(), mainWindow.getUpdateExecutor());
+					currentController.init(mainWindow.getDataLoader());
 					
 					mainWindow.setScene(scene);
 					mainWindow.getPrimaryWindow().sizeToScene();
