@@ -2,8 +2,8 @@ package medproject.medclient.dataLoader;
 
 import java.util.logging.Logger;
 
-import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 import medproject.medclient.logging.LogWriter;
+import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.account.LoginStructure;
 import medproject.medlibrary.account.OperatorType;
 import medproject.medlibrary.concurrency.Request;
@@ -40,7 +40,7 @@ public class LoginLoader {
 			dataLoader.getInitialLoader().loadData();
 		}
 		else{
-			//error operator doesn't exist
+			GUIUtils.showErrorDialog("Login Error", request.getMessage());
 		}
 	}
 }
