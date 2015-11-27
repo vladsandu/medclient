@@ -1,8 +1,6 @@
 package medproject.medclient.dataLoader;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import medproject.medclient.graphicalInterface.mainWindow.Navigator;
+import medproject.medclient.graphicalInterface.Navigator;
 
 public class InitialLoader {
 
