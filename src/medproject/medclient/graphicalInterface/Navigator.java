@@ -1,4 +1,4 @@
-package medproject.medclient.graphicalInterface.mainWindow;
+package medproject.medclient.graphicalInterface;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -6,17 +6,18 @@ import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import medproject.medclient.graphicalInterface.ControllerInterface;
+import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.logging.LogWriter;
 
 public class Navigator {
 	//TODO: Refactor the navigator
 	private static final Logger LOG = LogWriter.getLogger("Navigator");
 
-	public static final String LOGIN_SCENE = "./loginScene/loginScene.fxml";
-	public static final String LOADING_SCENE = "./loadingScene/loadingScene.fxml";
-	public static final String MAIN_SCENE = "./mainScene/mainScene.fxml";
-	public static final String PERSON_TAB_SCENE = "./personTabScene/personTabScene.fxml";
+	public static final String LOGIN_SCENE = "./mainWindow/loginScene/loginScene.fxml";
+	public static final String LOADING_SCENE = "./mainWindow/loadingScene/loadingScene.fxml";
+	public static final String MAIN_SCENE = "./mainWindow/mainScene/mainScene.fxml";
+	public static final String PERSON_TAB_SCENE = "./mainWindow/personTabScene/personTabScene.fxml";
+	public static final String ADD_PERSON_SCENE = "./addPersonWindow/addPersonScene.fxml";
 
 	private static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
 	
@@ -59,13 +60,31 @@ public class Navigator {
 		});
 	}
 
+	public static Scene getScene(final String fxml){
+		Scene scene = null;
+		
+		try {
+			FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
+			Pane pane = (Pane) loader.load();
+			scene = new Scene(pane);
+			scene.getStylesheets().add(DEFAULT_STYLESHEET);
+			ControllerInterface currentController = (ControllerInterface)loader.getController();
+			currentController.init(mainWindow.getDataLoader());
+		} catch (IOException e) {
+			LOG.severe("Cannot find fxml file location for value: " + fxml);
+		}
+		
+		return scene;
+	}
+
+	
 	public static Pane getPaneFromScene(final String fxml){
 		FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
 		Pane pane = null;
 		try {
 			pane = (Pane) loader.load();
 			ControllerInterface currentController = (ControllerInterface)loader.getController();
-			currentController.init(mainWindow.getDataLoader(), mainWindow.getUpdateExecutor());
+			currentController.init(mainWindow.getDataLoader());
 		} catch (IOException e) {
 			LOG.severe("Couldn't load pane from: " + fxml + "; " + e.getMessage());
 		}
