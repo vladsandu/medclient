@@ -1,9 +1,8 @@
 package medproject.medclient.graphicalInterface.mainWindow;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -11,10 +10,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import medproject.medclient.dataLoader.DataLoader;
+import medproject.medclient.graphicalInterface.Navigator;
 import medproject.medclient.graphicalInterface.mainWindow.loadingScene.LoadingController;
+import medproject.medclient.logging.LogWriter;
 
 public class MainWindow{
 	
+	private final Logger LOG = LogWriter.getLogger(this.getClass().getName());
 	public DataLoader dataLoader;
 	
 	private Stage primaryWindow;
@@ -60,7 +62,7 @@ public class MainWindow{
 			future.get();
 		}
 		catch (InterruptedException | ExecutionException e) {
-			throw new RuntimeException(e);//FIXME: refactor
+			LOG.severe("Couldn't execute task on JFX thread");
 		}
 	}
 	
