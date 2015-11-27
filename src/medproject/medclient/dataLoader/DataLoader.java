@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,6 +14,9 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import medproject.medclient.concurrency.AddPatientTask;
+import medproject.medclient.concurrency.PatientRecordListTask;
+import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
@@ -32,7 +36,7 @@ public class DataLoader implements Runnable{
 	private final List<Request> pendingRequests;
 	private final LinkedBlockingQueue<Request> completedRequests;
 	private final List<CustomTask> guiTasks;
-	
+
 	private final NetConnectionThread connectionThread;
 	private final MainWindow mainWindow;
 
@@ -42,11 +46,11 @@ public class DataLoader implements Runnable{
 
 	private final ObservableList<Patient> patientList;
 	private final ExecutorService executor;
-	
+
 	public DataLoader(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 		executor = Executors.newSingleThreadExecutor();
-		
+
 		connectionThread = new NetConnectionThread(this);
 		connectionThread.setAddress(new InetSocketAddress("localhost", 1338));
 
@@ -59,7 +63,7 @@ public class DataLoader implements Runnable{
 		patientLoader = new PatientLoader(this);
 
 		patientList = FXCollections.observableArrayList();
-		
+
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
 
@@ -76,7 +80,7 @@ public class DataLoader implements Runnable{
 		thread.interrupt();
 		connectionThread.stop();
 	}
-	
+
 	@Override
 	public void run(){
 
@@ -91,14 +95,9 @@ public class DataLoader implements Runnable{
 		}
 	}
 
-	public void processGuiTask(CustomTask task){
-		guiTasks.add(task);
-	}
-	
 	public void makeRequest(Request request){
 		pendingRequests.add(request);
 	}
-
 	/**
 	 * Processes the request and sends it to the appropriate loader.
 	 * @param request the Request to be processed.
@@ -132,14 +131,50 @@ public class DataLoader implements Runnable{
 		mainWindow.runAndWait(runnable);
 	}
 
-	public void addPatient(Patient patient){
-		patientList.add(patient);
+	public void addPatient(final Patient patient){
+		makeWindowRequest(new Runnable(){
+
+			@Override
+			public void run() {
+				patientList.add(patient);	
+			}
+			
+		});
 	}
-	
+
 	public ObservableList<Patient> getPatientList(){
 		return patientList;
 	}
+
+	private void addGuiTask(CustomTask task){
+		guiTasks.add(task);
+		executor.execute(task);
+	}
+
+	public void makePatientRecordByCNPRequest(AddPersonController controller, String cnp){
+		patientLoader.makePatientRecordByCNPRequest(cnp);
+		addGuiTask(new PatientRecordListTask(controller));
+	}
+
+	public void makeAddPatientRequest(AddPersonController controller, int pid, int pin){
+		patientLoader.makeAddPatientRequest(pid, pin);
+		addGuiTask(new AddPatientTask(this, controller));	
+	}
 	
+	public void processGuiTask(Request request){
+		synchronized(guiTasks){
+			for(Iterator<CustomTask> it = guiTasks.iterator(); it.hasNext();){
+				CustomTask task = it.next();
+				if(task.getRequestCode() == request.getREQUEST_CODE()){
+					task.setData(request.getDATA());
+					task.getLatch().countDown();
+					it.remove();
+					break;
+				}
+			}
+		}
+	}
+
 	public boolean getConnectionStatus(){
 		return connectionStatus.get();
 	}
@@ -166,5 +201,9 @@ public class DataLoader implements Runnable{
 
 	public ExecutorService getExecutor() {
 		return executor;
+	}
+
+	public List<CustomTask> getGuiTasks() {
+		return guiTasks;
 	}
 }
