@@ -1,7 +1,5 @@
 package medproject.medclient.graphicalInterface.mainWindow.personTabScene;
 
-import java.util.concurrent.ExecutorService;
-
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -16,7 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.util.Callback;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
-import medproject.medlibrary.concurrency.PacientRecordListTask;
+import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonWindow;
 import medproject.medlibrary.patient.Patient;
 
 public class PersonTabController implements ControllerInterface{
@@ -70,6 +68,8 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	@FXML protected void onPressAdaugaPersoana(){
+		AddPersonWindow addPersonWindow = new AddPersonWindow();
+		addPersonWindow.show();
 	}
 
 	@FXML protected void onPressModificaPersoana(){
