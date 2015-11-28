@@ -21,7 +21,7 @@ public class InitialLoader {
 
 
 	public void loadData(){
-		Navigator.loadScene(Navigator.LOADING_SCENE);
+		Navigator.loadSceneToMainWindow(Navigator.LOADING_SCENE);
 		
 		dataLoader.getPatientLoader().loadPatientList();
 		increaseProgress();
@@ -47,7 +47,7 @@ public class InitialLoader {
 			setLoadingMessage(loadingMessages[currentRequestNumber]);
 		
 		if(isLoadingComplete())
-			Navigator.loadScene(Navigator.MAIN_SCENE);
+			Navigator.loadSceneToMainWindow(Navigator.MAIN_SCENE);
 		
 	}
 

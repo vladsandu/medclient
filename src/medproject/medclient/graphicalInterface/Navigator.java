@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.logging.LogWriter;
 
@@ -17,7 +18,10 @@ public class Navigator {
 	public static final String LOADING_SCENE = "./mainWindow/loadingScene/loadingScene.fxml";
 	public static final String MAIN_SCENE = "./mainWindow/mainScene/mainScene.fxml";
 	public static final String PERSON_TAB_SCENE = "./mainWindow/personTabScene/personTabScene.fxml";
+	
 	public static final String ADD_PERSON_SCENE = "./addPersonWindow/addPersonScene.fxml";
+	public static final String PATIENT_DATA_SCENE = "./patientDataWindow/patientDataScene/patientDataScene.fxml";
+	public static final String PATIENT_RECORD_SCENE = "./patientDataWindow/patientRecordScene/patientRecordScene.fxml";
 
 	private static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
 	
@@ -29,7 +33,7 @@ public class Navigator {
 		Navigator.mainWindow = mainWindow;
 	}
 
-	public static void loadScene(final String fxml) {
+	public static void loadSceneToMainWindow(final String fxml) {
 		if(mainWindow == null){
 			LOG.severe("Navigator not initialized");
 			return;
@@ -45,7 +49,7 @@ public class Navigator {
 					Scene scene = new Scene(pane);
 					scene.getStylesheets().add(DEFAULT_STYLESHEET);
 					ControllerInterface currentController = (ControllerInterface)loader.getController();
-					currentController.init(mainWindow.getDataLoader());
+					currentController.init(mainWindow.getDataLoader(), mainWindow.getPrimaryWindow());
 					
 					mainWindow.setScene(scene);
 					mainWindow.getPrimaryWindow().sizeToScene();
@@ -59,8 +63,8 @@ public class Navigator {
 
 		});
 	}
-
-	public static Scene getScene(final String fxml){
+	
+	public static Scene getScene(final String fxml, final Stage stage){
 		Scene scene = null;
 		
 		try {
@@ -69,7 +73,7 @@ public class Navigator {
 			scene = new Scene(pane);
 			scene.getStylesheets().add(DEFAULT_STYLESHEET);
 			ControllerInterface currentController = (ControllerInterface)loader.getController();
-			currentController.init(mainWindow.getDataLoader());
+			currentController.init(mainWindow.getDataLoader(), stage);
 		} catch (IOException e) {
 			LOG.severe("Cannot find fxml file location for value: " + fxml);
 		}
@@ -78,19 +82,19 @@ public class Navigator {
 	}
 
 	
-	public static Pane getPaneFromScene(final String fxml){
+	public static Pane getPaneFromScene(final String fxml, final Stage stage){
 		FXMLLoader loader = new FXMLLoader(Navigator.class.getResource(fxml));
 		Pane pane = null;
 		try {
 			pane = (Pane) loader.load();
 			ControllerInterface currentController = (ControllerInterface)loader.getController();
-			currentController.init(mainWindow.getDataLoader());
+			currentController.init(mainWindow.getDataLoader(), stage);
 		} catch (IOException e) {
 			LOG.severe("Couldn't load pane from: " + fxml + "; " + e.getMessage());
 		}
 		
 		return pane;
-	}
+	}	
 	
 		
 	public static String getCurrentScene() {
