@@ -16,7 +16,7 @@ public class AddPersonWindow extends Stage{
                 close();
             }
         });
-		setScene(Navigator.getScene(Navigator.ADD_PERSON_SCENE));
+		setScene(Navigator.getScene(Navigator.ADD_PERSON_SCENE, this));
 		initStyle(StageStyle.UTILITY);
 		initModality(Modality.APPLICATION_MODAL);   
 	}

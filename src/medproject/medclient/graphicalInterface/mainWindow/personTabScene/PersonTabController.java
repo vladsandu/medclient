@@ -11,10 +11,12 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
 import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonWindow;
+import medproject.medclient.graphicalInterface.patientDataWindow.PatientDataWindow;
 import medproject.medlibrary.patient.Patient;
 
 public class PersonTabController implements ControllerInterface{
@@ -58,13 +60,18 @@ public class PersonTabController implements ControllerInterface{
 	private ToggleGroup insuredRadioGroup, registeredRadioGroup;
 
 	@Override
-	public void init(DataLoader dataLoader) {
+	public void init(DataLoader dataLoader, Stage stage) {
 		this.dataLoader = dataLoader;
 
 		patientTable.setItems(dataLoader.getPatientList());
 		patientTable.setEditable(false);
 		setColumnValues();
 		setRadioButtonGroups();
+		setListeners();
+	}
+
+	private void setListeners() {
+		modificaPersoanaButton.disableProperty().bind(patientTable.getSelectionModel().selectedItemProperty().isNull());	
 	}
 
 	@FXML protected void onPressAdaugaPersoana(){
@@ -73,7 +80,8 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	@FXML protected void onPressModificaPersoana(){
-
+		PatientDataWindow patientDataWindow = new PatientDataWindow(patientTable.getSelectionModel().getSelectedItem());
+		patientDataWindow.show();
 	}
 
 	@FXML protected void onPressStergePersoana(){

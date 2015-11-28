@@ -1,13 +1,11 @@
 package medproject.medclient.graphicalInterface.mainWindow.loginScene;
 
-import java.util.concurrent.ExecutorService;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
-import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 
 public class LoginController implements ControllerInterface{
 
@@ -25,7 +23,7 @@ public class LoginController implements ControllerInterface{
 	}
 
 	@Override
-	public void init(DataLoader dataLoader) {
+	public void init(DataLoader dataLoader, Stage stage) {
 		this.dataLoader = dataLoader;
 	}
 	

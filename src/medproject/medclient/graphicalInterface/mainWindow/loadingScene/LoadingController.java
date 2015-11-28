@@ -1,20 +1,11 @@
 package medproject.medclient.graphicalInterface.mainWindow.loadingScene;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
-
-import javafx.animation.Animation;
-import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.stage.Stage;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.ControllerInterface;
-import medproject.medclient.graphicalInterface.mainWindow.Navigator;
 
 public class LoadingController implements ControllerInterface{
 
@@ -24,7 +15,7 @@ public class LoadingController implements ControllerInterface{
 	@FXML private Label message_label;
 
 	@Override
-	public void init(final DataLoader dataLoader) {
+	public void init(final DataLoader dataLoader, Stage stage) {
 		// TODO Auto-generated method stub
 	}
 	
