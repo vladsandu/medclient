@@ -16,13 +16,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import medproject.medclient.concurrency.AddPatientTask;
 import medproject.medclient.concurrency.PatientRecordListTask;
+import medproject.medclient.concurrency.UpdateAddressTask;
 import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
+import medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController;
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
 import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.patient.Address;
 import medproject.medlibrary.patient.Patient;
 
 public class DataLoader implements Runnable{
@@ -141,6 +144,25 @@ public class DataLoader implements Runnable{
 			
 		});
 	}
+	
+	public void updatePatientAddress(final Address address){
+		for(final Patient patient : patientList){
+			if(patient.getPatientRecord().getPERSON_ID() == address.getPersonID()){
+				makeWindowRequest(new Runnable(){
+
+					@Override
+					public void run() {
+						patient.getPatientRecord().setAddress(address);
+						int position = patientList.indexOf(patient);
+						patientList.set(position, null);
+						patientList.set(position, patient);
+					}
+					
+				});
+				break;
+			}
+		}
+	}
 
 	public ObservableList<Patient> getPatientList(){
 		return patientList;
@@ -156,6 +178,11 @@ public class DataLoader implements Runnable{
 		addGuiTask(new PatientRecordListTask(controller));
 	}
 
+	public void makeUpdatePatientAddressRequest(PatientRecordController controller, Address address){
+		patientLoader.makeUpdatePatientAddressRequest(address);
+		addGuiTask(new UpdateAddressTask(this, controller, address));
+	}
+
 	public void makeAddPatientRequest(AddPersonController controller, int pid, int pin){
 		patientLoader.makeAddPatientRequest(pid, pin);
 		addGuiTask(new AddPatientTask(this, controller));	
@@ -167,6 +194,7 @@ public class DataLoader implements Runnable{
 				CustomTask task = it.next();
 				if(task.getRequestCode() == request.getREQUEST_CODE()){
 					task.setData(request.getDATA());
+					task.setRequestStatus(request.getStatus());
 					task.getLatch().countDown();
 					it.remove();
 					break;

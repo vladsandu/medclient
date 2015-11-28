@@ -5,10 +5,10 @@ import java.util.logging.Logger;
 
 import medproject.medclient.logging.LogWriter;
 import medproject.medclient.utils.GUIUtils;
-import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
 import medproject.medlibrary.concurrency.RequestStatus;
+import medproject.medlibrary.patient.Address;
 import medproject.medlibrary.patient.Patient;
 
 public class PatientLoader {
@@ -27,13 +27,15 @@ public class PatientLoader {
 		case RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST:
 			processPatientRecordByCNPRequest(request);
 			break;
-
 		case RequestCodes.ADD_PATIENT_REQUEST:
 			processAddPatientRequest(request);
 			break;
+		case RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST:
+			processUpdatePatientAddressRequest(request);
+			break;
 		}
 	}
-
+//AddPatientRequest
 	public void makeAddPatientRequest(int PID, int PIN){
 		dataLoader.makeRequest(new Request(RequestCodes.ADD_PATIENT_REQUEST, PID, PIN));
 	}
@@ -47,7 +49,24 @@ public class PatientLoader {
 		}
 		dataLoader.processGuiTask(request);
 	}
+//UpdatePatientRecord
+	public void makeUpdatePatientAddressRequest(Address address){
+		dataLoader.makeRequest(new Request(RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST, address));
+	}
 	
+	private void processUpdatePatientAddressRequest(Request request){
+		LOG.info(request.getMessage());
+
+		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
+			
+		}
+		else{
+			GUIUtils.showErrorDialog("Patient Address Update Request Error", request.getMessage());
+		}
+
+		dataLoader.processGuiTask(request);
+	}
+//GetPatientRecordByCNP
 	public void makePatientRecordByCNPRequest(String cnp){
 		dataLoader.makeRequest(new Request(RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST, cnp));
 	}
@@ -64,7 +83,7 @@ public class PatientLoader {
 
 		dataLoader.processGuiTask(request);
 	}
-
+//PatientList
 	public void loadPatientList(){
 		dataLoader.makeRequest(new Request(RequestCodes.PATIENT_LIST_REQUEST, null));
 	}
