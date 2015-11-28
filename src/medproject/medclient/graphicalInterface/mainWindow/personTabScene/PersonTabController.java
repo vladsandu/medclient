@@ -2,6 +2,7 @@ package medproject.medclient.graphicalInterface.mainWindow.personTabScene;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -60,10 +61,11 @@ public class PersonTabController implements ControllerInterface{
 	private ToggleGroup insuredRadioGroup, registeredRadioGroup;
 
 	@Override
-	public void init(DataLoader dataLoader, Stage stage) {
+	public void init(final DataLoader dataLoader, Stage stage) {
 		this.dataLoader = dataLoader;
 
 		patientTable.setItems(dataLoader.getPatientList());
+
 		patientTable.setEditable(false);
 		setColumnValues();
 		setRadioButtonGroups();
@@ -71,6 +73,15 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	private void setListeners() {
+		dataLoader.getPatientList().addListener(new ListChangeListener<Patient>(){
+
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Patient> event) {
+				patientTable.setItems(dataLoader.getPatientList());
+				
+			}
+			
+		});
 		modificaPersoanaButton.disableProperty().bind(patientTable.getSelectionModel().selectedItemProperty().isNull());	
 	}
 
@@ -142,13 +153,13 @@ public class PersonTabController implements ControllerInterface{
 
 		genderColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-				return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getSex());
+				return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getSex().toString());
 			}
 		});
 
 		categoryColumn.setCellValueFactory(new Callback<CellDataFeatures<Patient, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Patient, String> p) {
-				return new ReadOnlyObjectWrapper<String>(p.getValue().getCategory().toString());
+				return new ReadOnlyObjectWrapper<String>(p.getValue().getPatientRecord().getCategory().toString());
 			}
 		});
 
