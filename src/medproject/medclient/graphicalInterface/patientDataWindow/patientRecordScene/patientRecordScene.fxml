@@ -5,15 +5,102 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController">
+<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="480.0" prefWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <GridPane alignment="TOP_CENTER" hgap="10.0" vgap="20.0" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0" prefWidth="117.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <TextField fx:id="firstNameTextField" />
-            <Label text="Label" />
+            <Label text="CNP:" />
+            <TextField fx:id="cnpTextField" prefHeight="25.0" prefWidth="41.0" GridPane.columnIndex="1" />
+            <Label text="PID:" GridPane.columnIndex="2" />
+            <TextField fx:id="pidTextField" GridPane.columnIndex="3" />
+            <Label text="Nume:" GridPane.rowIndex="1" />
+            <TextField fx:id="firstNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Prenume:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="lastNameTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField fx:id="birthDateTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Data Nastere:" GridPane.rowIndex="2" />
+            <TextField fx:id="deceaseDateTextField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label text="Data Deces:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label text="Gen:" GridPane.columnIndex="4" />
+            <ChoiceBox fx:id="genderChoiceBox" prefWidth="150.0" GridPane.columnIndex="5" />
+            <Label text="Cetatenie:" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <ChoiceBox fx:id="nationalityChoiceBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Label text="Categorie" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <ChoiceBox fx:id="categoryChoiceBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+            <Label text="Data Inscriere:" GridPane.rowIndex="3" />
+            <TextField fx:id="registrationDateTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Data Iesire:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <TextField fx:id="unregistrationDateTextField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Label text="Stare Asigurat:" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="patientStatusChoiceBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+            <Label text="Inscris:" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <CheckBox fx:id="registeredCheckBox" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <Label text="Grupa Sanguina:" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="bloodTypeChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="RH:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="rhChoiceBox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+         </children>
+      </GridPane>
+      <Separator prefWidth="200.0" VBox.vgrow="ALWAYS" />
+      <GridPane alignment="TOP_CENTER" hgap="10.0" vgap="20.0">
+         <children>
+            <Label text="Judet:" />
+            <TextField fx:id="countyTextField" prefHeight="25.0" prefWidth="41.0" GridPane.columnIndex="1" />
+            <Label text="Localitate:" GridPane.columnIndex="2" />
+            <TextField fx:id="cityTextField" GridPane.columnIndex="3" />
+            <Label text="Bloc:" GridPane.rowIndex="2" />
+            <TextField fx:id="buildingTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Scara:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <TextField fx:id="scaraTextField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label text="Strada:" GridPane.rowIndex="1" />
+            <Label text="Apartament:" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <TextField fx:id="streetTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="apartmentTextField" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+            <Label text="Nr Strada:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="streetNumberTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label text="Cod Postal:" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <TextField fx:id="zipCodeTextField" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Label text="Telefon:" GridPane.columnIndex="4" />
+            <TextField fx:id="phoneTextField" GridPane.columnIndex="5" />
+         </children>
+         <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0" prefWidth="117.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+      </GridPane>
+      <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+         <children>
+            <Button fx:id="saveButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onPressSave" prefHeight="50.0" prefWidth="80.0" text="Salveaza" />
+            <Region prefWidth="100.0" />
+            <Button fx:id="cancelButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onPressCancel" prefHeight="50.0" prefWidth="80.0" text="Anuleaza" />
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
    </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
 </VBox>
