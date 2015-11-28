@@ -35,7 +35,7 @@ public class MainWindow{
                 stop();
             }
         });  
-        Navigator.loadScene(Navigator.LOGIN_SCENE);
+        Navigator.loadSceneToMainWindow(Navigator.LOGIN_SCENE);
         primaryWindow.show();    
     }
 	
