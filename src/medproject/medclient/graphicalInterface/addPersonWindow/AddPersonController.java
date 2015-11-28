@@ -41,10 +41,12 @@ public class AddPersonController implements ControllerInterface{
 	
 	private ObservableList<PatientRecord> patientRecordList;
 	private DataLoader dataLoader;
+	private Stage stage;
 	
 	@Override
 	public void init(DataLoader dataLoader, Stage stage) {
 		this.dataLoader = dataLoader;
+		this.stage = stage;
 		this.patientRecordList = FXCollections.observableArrayList();
 		patientRecordTable.setItems(patientRecordList);
 		setColumnValues();
@@ -71,7 +73,7 @@ public class AddPersonController implements ControllerInterface{
 	}
 	
 	@FXML protected void onPressAnuleaza(){
-		anuleazaButton.getScene().getWindow().hide();
+		stage.close();
 	}
 
 	@FXML protected void onPressAdaugaPacient(){
@@ -91,7 +93,7 @@ public class AddPersonController implements ControllerInterface{
 
 			@Override
 			public void run() {
-				onPressAnuleaza();			
+				onPressAnuleaza();	
 			}
 			
 		});
@@ -129,7 +131,7 @@ public class AddPersonController implements ControllerInterface{
 
 		genderColumn.setCellValueFactory(new Callback<CellDataFeatures<PatientRecord, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<PatientRecord, String> p) {
-				return new ReadOnlyObjectWrapper<String>(p.getValue().getSex());
+				return new ReadOnlyObjectWrapper<String>(p.getValue().getSex().toString());
 			}
 		});
 
