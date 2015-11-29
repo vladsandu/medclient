@@ -1,6 +1,7 @@
 package medproject.medclient.graphicalInterface.mainWindow.personTabScene;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -73,16 +74,32 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	private void setListeners() {
+		patientTable.getSelectionModel().clearSelection();
+		
 		dataLoader.getPatientList().addListener(new ListChangeListener<Patient>(){
 
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Patient> event) {
 				patientTable.setItems(dataLoader.getPatientList());
-				
 			}
-			
+		});//useless maybe?
+
+		patientTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Patient>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Patient> observable, Patient oldValue, Patient newValue) {
+				if(newValue == null){
+					stergePersoanaButton.setDisable(true);
+				}
+				else if(newValue.getRegistrationRecord().isRegistered())
+					stergePersoanaButton.setDisable(true);
+				else
+					stergePersoanaButton.setDisable(false);
+			}
+
 		});
-		modificaPersoanaButton.disableProperty().bind(patientTable.getSelectionModel().selectedItemProperty().isNull());	
+		modificaPersoanaButton.disableProperty().bind(patientTable.getSelectionModel().selectedItemProperty().isNull());
+		stergePersoanaButton.setDisable(true);
 	}
 
 	@FXML protected void onPressAdaugaPersoana(){
@@ -91,12 +108,24 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	@FXML protected void onPressModificaPersoana(){
-		PatientDataWindow patientDataWindow = new PatientDataWindow(patientTable.getSelectionModel().getSelectedItem());
+		Patient patient = patientTable.getSelectionModel().getSelectedItem();
+
+		if(patient == null)
+			return;
+
+		PatientDataWindow patientDataWindow = new PatientDataWindow(patient);
 		patientDataWindow.show();
 	}
 
 	@FXML protected void onPressStergePersoana(){
+		Patient patient = patientTable.getSelectionModel().getSelectedItem();
 
+		if(patient == null)
+			return;
+		if(patient.getRegistrationRecord().isRegistered())
+			return;
+
+		dataLoader.makeDeletePatientRequest(patient);
 	}
 
 	@FXML protected void onPressReinscriere(){
@@ -118,7 +147,7 @@ public class PersonTabController implements ControllerInterface{
 	@FXML protected void onPressExport(){
 
 	}
-	
+
 	private void setRadioButtonGroups() {
 		this.insuredRadioGroup = new ToggleGroup();
 		this.registeredRadioGroup = new ToggleGroup();
