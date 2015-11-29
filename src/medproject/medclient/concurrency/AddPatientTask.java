@@ -13,7 +13,7 @@ public class AddPatientTask extends CustomTask{
 	private final AddPersonController controller;
 	
 	public AddPatientTask(DataLoader dataLoader, AddPersonController controller) {
-		super(RequestCodes.ADD_PATIENT_REQUEST);
+		super(RequestCodes.ADD_PATIENT_REQUEST, "Se adauga pacientul...");
 		this.dataLoader = dataLoader;
 		this.controller = controller;
 	}
@@ -21,6 +21,7 @@ public class AddPatientTask extends CustomTask{
 	@Override
 	public void run() {
 		try {
+			loadingWindow.start();
 			getLatch().await();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -39,6 +40,7 @@ public class AddPatientTask extends CustomTask{
 		else{
 			controller.resetInterface();
 		}
+		loadingWindow.stop();
 	}
 
 }

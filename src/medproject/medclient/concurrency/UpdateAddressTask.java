@@ -16,7 +16,7 @@ public class UpdateAddressTask extends CustomTask{
 	private final Address address;
 	
 	public UpdateAddressTask(DataLoader dataLoader, PatientRecordController controller, Address address) {
-		super(RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST);
+		super(RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST, "Se actualizeaza datele pacientului...");
 		this.dataLoader = dataLoader;
 		this.controller = controller;
 		this.address = address;
@@ -25,6 +25,7 @@ public class UpdateAddressTask extends CustomTask{
 	@Override
 	public void run() {
 		try {
+			loadingWindow.start();
 			getLatch().await();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -37,7 +38,7 @@ public class UpdateAddressTask extends CustomTask{
 				GUIUtils.showErrorDialog("Update patient address error", "Data corrupted");
 			}
 		}
-		
+		loadingWindow.stop();
 		controller.closeWindow();
 	}
 

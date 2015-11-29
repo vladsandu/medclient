@@ -12,7 +12,7 @@ public class PatientRecordListTask extends CustomTask{
 	private final AddPersonController controller;
 
 	public PatientRecordListTask(AddPersonController controller) {
-		super(RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST);
+		super(RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST, "Se cauta persoana...");
 		this.controller = controller;
 	}
 
@@ -20,6 +20,7 @@ public class PatientRecordListTask extends CustomTask{
 	@Override
 	public void run() {
 		try {
+			loadingWindow.start();
 			getLatch().await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -29,6 +30,7 @@ public class PatientRecordListTask extends CustomTask{
 			controller.updateRecordList(patientRecordList);
 		}
 		controller.resetInterface();
+		loadingWindow.stop();
 	}
 
 }
