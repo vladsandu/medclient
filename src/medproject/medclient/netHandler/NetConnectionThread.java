@@ -10,16 +10,14 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 
 import medproject.medclient.dataLoader.DataLoader;
-import medproject.medclient.logging.LogWriter;
 import medproject.medlibrary.concurrency.Request;
+import medproject.medlibrary.logging.LogWriter;
 
 public class NetConnectionThread implements Runnable{
 
@@ -143,6 +141,7 @@ public class NetConnectionThread implements Runnable{
 			}
 		} catch (Exception e) {
 			LOG.severe("Connection thread exception");
+			//TODO: Refactor
 		}
 	}
 

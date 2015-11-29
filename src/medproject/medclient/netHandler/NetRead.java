@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 import medproject.medclient.dataLoader.DataLoader;
-import medproject.medclient.logging.LogWriter;
 import medproject.medlibrary.concurrency.Request;
+import medproject.medlibrary.logging.LogWriter;
 
 public class NetRead {
 	

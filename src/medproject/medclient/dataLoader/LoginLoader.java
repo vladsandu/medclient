@@ -2,13 +2,13 @@ package medproject.medclient.dataLoader;
 
 import java.util.logging.Logger;
 
-import medproject.medclient.logging.LogWriter;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.account.LoginStructure;
 import medproject.medlibrary.account.OperatorType;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
 import medproject.medlibrary.concurrency.RequestStatus;
+import medproject.medlibrary.logging.LogWriter;
 
 public class LoginLoader {
 	private final Logger LOG = LogWriter.getLogger(this.getClass().getName());

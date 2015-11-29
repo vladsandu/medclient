@@ -20,11 +20,11 @@ import medproject.medclient.concurrency.UpdateAddressTask;
 import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController;
-import medproject.medclient.logging.LogWriter;
 import medproject.medclient.netHandler.NetConnectionThread;
 import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.logging.LogWriter;
 import medproject.medlibrary.patient.Address;
 import medproject.medlibrary.patient.Patient;
 

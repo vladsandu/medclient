@@ -8,11 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
-import medproject.medclient.logging.LogWriter;
+import medproject.medlibrary.logging.LogWriter;
 
 public class Navigator {
 	//TODO: Refactor the navigator
 	private static final Logger LOG = LogWriter.getLogger("Navigator");
+
+	public static final String REQUEST_LOADING_SCENE = "./requestLoadingWindow/requestLoadingScene.fxml";
 
 	public static final String LOGIN_SCENE = "./mainWindow/loginScene/loginScene.fxml";
 	public static final String LOADING_SCENE = "./mainWindow/loadingScene/loadingScene.fxml";
@@ -23,7 +25,7 @@ public class Navigator {
 	public static final String PATIENT_DATA_SCENE = "./patientDataWindow/patientDataScene/patientDataScene.fxml";
 	public static final String PATIENT_RECORD_SCENE = "./patientDataWindow/patientRecordScene/patientRecordScene.fxml";
 
-	private static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
+	public static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
 	
 	private static MainWindow mainWindow = null;
 	private static String currentScene = "";
@@ -95,7 +97,6 @@ public class Navigator {
 		
 		return pane;
 	}	
-	
 		
 	public static String getCurrentScene() {
 		return currentScene;

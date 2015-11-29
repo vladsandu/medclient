@@ -10,7 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Modality;
-import medproject.medclient.logging.LogWriter;
+import medproject.medlibrary.logging.LogWriter;
 
 public class GUIUtils {
 

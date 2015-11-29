@@ -12,7 +12,7 @@ import javafx.stage.WindowEvent;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.Navigator;
 import medproject.medclient.graphicalInterface.mainWindow.loadingScene.LoadingController;
-import medproject.medclient.logging.LogWriter;
+import medproject.medlibrary.logging.LogWriter;
 
 public class MainWindow{
 	

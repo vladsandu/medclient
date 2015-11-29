@@ -3,11 +3,11 @@ package medproject.medclient.dataLoader;
 import java.util.List;
 import java.util.logging.Logger;
 
-import medproject.medclient.logging.LogWriter;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
 import medproject.medlibrary.concurrency.RequestStatus;
+import medproject.medlibrary.logging.LogWriter;
 import medproject.medlibrary.patient.Address;
 import medproject.medlibrary.patient.Patient;
 

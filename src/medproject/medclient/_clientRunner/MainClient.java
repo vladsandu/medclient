@@ -7,7 +7,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import medproject.medclient.dataLoader.DataLoader;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
-import medproject.medclient.logging.LogWriter;
+import medproject.medlibrary.logging.LogWriter;
 
 
 public class MainClient extends Application{	
@@ -17,7 +17,7 @@ public class MainClient extends Application{
 	@Override
 	public void start(Stage primaryWindow) throws Exception {
 
-		LogWriter.useFileLogging();
+		LogWriter.useFileLogging("medClient_log.log");
 		LogWriter.setDebugMode(true);
 		
 		final MainWindow mainWindow = new MainWindow();
