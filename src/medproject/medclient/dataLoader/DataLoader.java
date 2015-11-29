@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import medproject.medclient.concurrency.AddPatientTask;
+import medproject.medclient.concurrency.DeletePatientTask;
 import medproject.medclient.concurrency.PatientRecordListTask;
 import medproject.medclient.concurrency.UpdateAddressTask;
 import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
@@ -98,9 +99,6 @@ public class DataLoader implements Runnable{
 		}
 	}
 
-	public void makeRequest(Request request){
-		pendingRequests.add(request);
-	}
 	/**
 	 * Processes the request and sends it to the appropriate loader.
 	 * @param request the Request to be processed.
@@ -125,7 +123,11 @@ public class DataLoader implements Runnable{
 
 		completedRequests.add(processingRequest);
 	}
-
+	
+	public void makeRequest(Request request){
+		pendingRequests.add(request);
+	}
+	
 	public void makeLoginRequest(String operatorName, String password){
 		loginLoader.makeLoginRequest(operatorName, password);
 	}
@@ -143,6 +145,11 @@ public class DataLoader implements Runnable{
 			}
 			
 		});
+	}
+	
+	public void deletePatient(Patient patient) {
+		//TODO: delete the consultations as well
+		patientList.remove(patient);
 	}
 	
 	public void updatePatientAddress(final Address address){
@@ -186,6 +193,14 @@ public class DataLoader implements Runnable{
 	public void makeAddPatientRequest(AddPersonController controller, int pid, int pin){
 		patientLoader.makeAddPatientRequest(pid, pin);
 		addGuiTask(new AddPatientTask(this, controller));	
+	}
+	
+	public void makeDeletePatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		patientLoader.makeDeletePatientRequest(patient.getPatientID());
+		addGuiTask(new DeletePatientTask(this, patient));
 	}
 	
 	public void processGuiTask(Request request){

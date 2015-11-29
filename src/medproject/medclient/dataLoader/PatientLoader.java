@@ -33,9 +33,13 @@ public class PatientLoader {
 		case RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST:
 			processUpdatePatientAddressRequest(request);
 			break;
+		case RequestCodes.DELETE_PATIENT_REQUEST:
+			processDeletePatientRequest(request);
+			break;
 		}
 	}
-//AddPatientRequest
+
+	//AddPatientRequest
 	public void makeAddPatientRequest(int PID, int PIN){
 		dataLoader.makeRequest(new Request(RequestCodes.ADD_PATIENT_REQUEST, PID, PIN));
 	}
@@ -105,5 +109,22 @@ public class PatientLoader {
 			//fatal
 		}
 	}
+//DeletePatient
 
+	public void makeDeletePatientRequest(int patientID) {
+		dataLoader.makeRequest(new Request(RequestCodes.DELETE_PATIENT_REQUEST, patientID));
+	}
+	
+	private void processDeletePatientRequest(Request request) {
+		LOG.info(request.getMessage());
+
+		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
+		//TODO: Maybe refactor
+		}
+		else{
+			GUIUtils.showErrorDialog("Couldn't delete patient", request.getMessage());
+		}
+
+		dataLoader.processGuiTask(request);
+	}
 }
