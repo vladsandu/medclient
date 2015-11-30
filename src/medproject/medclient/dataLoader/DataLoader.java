@@ -176,13 +176,26 @@ public class DataLoader implements Runnable{
 		patient.getRegistrationRecord().setUnregistrationDate(unregistrationDate);
 		patient.getRegistrationRecord().setRegistered(false);
 		
+		updatePatientList(patient);
+	}
+
+	public void registerPatient(Patient patient, Date registrationDate) {
+		patient.getRegistrationRecord().setRegistrationDate(registrationDate);
+		patient.getRegistrationRecord().setUnregistrationDate(null);
+		patient.getRegistrationRecord().setRegistered(true);
+		
+		updatePatientList(patient);
+	}
+	
+	private void updatePatientList(Patient patient){
 		int position = patientList.indexOf(patient);
 		if(position != -1){
 			patientList.set(position, null);
 			patientList.set(position, patient);
 		}
 	}
-
+	
+	
 	public ObservableList<Patient> getPatientList(){
 		return patientList;
 	}
@@ -220,7 +233,15 @@ public class DataLoader implements Runnable{
 			return;
 
 		patientLoader.makeUnregisterPatientRequest(patient.getPatientID());
-		addGuiTask(new PatientTabTask(this, patient, RequestCodes.UNREGISTER_PATIENT_REQUEST, "Se scoate pacientul din lista..."));
+		addGuiTask(new PatientTabTask(this, patient, RequestCodes.UNREGISTER_PATIENT_REQUEST, "Se dezinscrie pacientul..."));
+	}
+	
+	public void makeRegisterPatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		patientLoader.makeRegisterPatientRequest(patient.getPatientID());
+		addGuiTask(new PatientTabTask(this, patient, RequestCodes.REGISTER_PATIENT_REQUEST, "Se inscrie pacientul..."));
 	}
 	
 	public void processGuiTask(Request request){

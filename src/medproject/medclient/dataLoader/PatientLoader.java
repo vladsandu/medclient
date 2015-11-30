@@ -39,6 +39,9 @@ public class PatientLoader {
 		case RequestCodes.UNREGISTER_PATIENT_REQUEST:
 			processUnregisterPatientRequest(request);
 			break;
+		case RequestCodes.REGISTER_PATIENT_REQUEST:
+			processRegisterPatientRequest(request);
+			break;
 		}
 	}
 
@@ -138,4 +141,20 @@ public class PatientLoader {
 		dataLoader.processGuiTask(request);
 	}
 
+	//RegisterPatient
+
+	public void makeRegisterPatientRequest(int patientID) {
+		dataLoader.makeRequest(new Request(RequestCodes.REGISTER_PATIENT_REQUEST, patientID));
+
+	}
+
+	private void processRegisterPatientRequest(Request request) {
+		LOG.info(request.getMessage());
+
+		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
+			GUIUtils.showErrorDialog("Couldn't register patient", request.getMessage());
+		}
+
+		dataLoader.processGuiTask(request);
+	}
 }

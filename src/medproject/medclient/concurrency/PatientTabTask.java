@@ -37,22 +37,33 @@ public class PatientTabTask  extends CustomTask{
 			case RequestCodes.UNREGISTER_PATIENT_REQUEST:
 				unregisterPatient();
 				break;
+			case RequestCodes.REGISTER_PATIENT_REQUEST:
+				registerPatient();
+				break;
 			}
 		}
-		
 		loadingWindow.stop();
 	}
 
 	private void deletePatient(){
 		dataLoader.deletePatient(patient);
 	}
-	
+
 	private void unregisterPatient(){
 		try{
 			Date unregistrationDate = (Date) data;
 			dataLoader.unregisterPatient(patient, unregistrationDate);
 		}catch(ClassCastException e){
 			GUIUtils.showErrorDialog("Unregister Patient Error", "Data corrupted");
+		}
+	}
+	
+	private void registerPatient(){
+		try{
+			Date registrationDate = (Date) data;
+			dataLoader.registerPatient(patient, registrationDate);
+		}catch(ClassCastException e){
+			GUIUtils.showErrorDialog("Register Patient Error", "Data corrupted");
 		}
 	}
 }
