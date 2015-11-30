@@ -40,6 +40,9 @@ public class PatientTabTask  extends CustomTask{
 			case RequestCodes.REGISTER_PATIENT_REQUEST:
 				registerPatient();
 				break;
+			case RequestCodes.DECEASED_PATIENT_REQUEST:
+				makePatientDeceased();
+				break;
 			}
 		}
 		loadingWindow.stop();
@@ -57,7 +60,16 @@ public class PatientTabTask  extends CustomTask{
 			GUIUtils.showErrorDialog("Unregister Patient Error", "Data corrupted");
 		}
 	}
-	
+
+	private void makePatientDeceased(){
+		try{
+			Date deceaseDate = (Date) data;
+			dataLoader.makePatientDeceased(patient, deceaseDate);
+		}catch(ClassCastException e){
+			GUIUtils.showErrorDialog("Deceased date error", "Data corrupted");
+		}
+	}
+
 	private void registerPatient(){
 		try{
 			Date registrationDate = (Date) data;

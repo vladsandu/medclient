@@ -187,6 +187,14 @@ public class DataLoader implements Runnable{
 		updatePatientList(patient);
 	}
 	
+	public void makePatientDeceased(Patient patient, Date deceaseDate) {
+		patient.getRegistrationRecord().setUnregistrationDate(deceaseDate);
+		patient.getRegistrationRecord().setRegistered(false);
+		patient.getPatientRecord().setDeceaseDate(deceaseDate);
+		
+		updatePatientList(patient);
+	}
+	
 	private void updatePatientList(Patient patient){
 		int position = patientList.indexOf(patient);
 		if(position != -1){
@@ -226,6 +234,14 @@ public class DataLoader implements Runnable{
 
 		patientLoader.makeDeletePatientRequest(patient.getPatientID());
 		addGuiTask(new PatientTabTask(this, patient, RequestCodes.DELETE_PATIENT_REQUEST, "Se sterge pacientul..."));
+	}
+
+	public void makeDeceasedPatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		patientLoader.makeDeceasedPatientRequest(patient.getPatientID());
+		addGuiTask(new PatientTabTask(this, patient, RequestCodes.DECEASED_PATIENT_REQUEST, "Se actualizeaza datele..."));
 	}
 	
 	public void makeUnregisterPatientRequest(Patient patient){
@@ -290,4 +306,5 @@ public class DataLoader implements Runnable{
 	public List<CustomTask> getGuiTasks() {
 		return guiTasks;
 	}
+
 }

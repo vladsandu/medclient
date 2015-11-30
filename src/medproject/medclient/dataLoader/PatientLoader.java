@@ -22,26 +22,9 @@ public class PatientLoader {
 	public void processRequest(Request request){
 		switch(request.getREQUEST_CODE()){
 		case RequestCodes.PATIENT_LIST_REQUEST:
-			processPatientListRequest(request);
-			break;
-		case RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST:
-			processGUITaskRequest(request);
-			break;
-		case RequestCodes.ADD_PATIENT_REQUEST:
-			processGUITaskRequest(request);
-			break;
-		case RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST:
-			processGUITaskRequest(request);
-			break;
-		case RequestCodes.DELETE_PATIENT_REQUEST:
-			processGUITaskRequest(request);
-			break;
-		case RequestCodes.UNREGISTER_PATIENT_REQUEST:
-			processGUITaskRequest(request);
-			break;
-		case RequestCodes.REGISTER_PATIENT_REQUEST:
-			processGUITaskRequest(request);
-			break;
+			processPatientListRequest(request);	break;
+		default:	
+			processGUITaskRequest(request);		break;
 		}
 	}
 
@@ -96,10 +79,13 @@ public class PatientLoader {
 
 	public void makeUnregisterPatientRequest(int patientID) {
 		dataLoader.makeRequest(new Request(RequestCodes.UNREGISTER_PATIENT_REQUEST, patientID));
-
 	}
 
 	public void makeRegisterPatientRequest(int patientID) {
 		dataLoader.makeRequest(new Request(RequestCodes.REGISTER_PATIENT_REQUEST, patientID));
+	}
+	
+	public void makeDeceasedPatientRequest(int patientID) {
+		dataLoader.makeRequest(new Request(RequestCodes.DECEASED_PATIENT_REQUEST, patientID));
 	}
 }

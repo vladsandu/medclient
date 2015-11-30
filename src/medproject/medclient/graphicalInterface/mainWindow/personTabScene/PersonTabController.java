@@ -90,14 +90,25 @@ public class PersonTabController implements ControllerInterface{
 			public void changed(ObservableValue<? extends Patient> observable, Patient oldValue, Patient newValue) {
 				if(newValue == null){
 					stergePersoanaButton.setDisable(true);
+					return;
+				}
+				if(newValue.getPatientRecord().getDeceaseDate() != null){
+					iesireButton.setDisable(true);
+					stergePersoanaButton.setDisable(false);
+					reinscriereButton.setDisable(true);
+					decesPersoanaButton.setDisable(true);
 				}
 				else if(newValue.getRegistrationRecord().isRegistered()){
 					iesireButton.setDisable(false);
 					stergePersoanaButton.setDisable(true);
+					reinscriereButton.setDisable(true);
+					decesPersoanaButton.setDisable(false);
 				}
 				else{
 					iesireButton.setDisable(true);
 					stergePersoanaButton.setDisable(false);
+					reinscriereButton.setDisable(false);
+					decesPersoanaButton.setDisable(false);
 				}
 			}
 
@@ -105,6 +116,7 @@ public class PersonTabController implements ControllerInterface{
 		modificaPersoanaButton.disableProperty().bind(patientTable.getSelectionModel().selectedItemProperty().isNull());
 		stergePersoanaButton.setDisable(true);
 		iesireButton.setDisable(true);
+		decesPersoanaButton.setDisable(true);
 	}
 
 	@FXML protected void onPressAdaugaPersoana(){
@@ -134,7 +146,15 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	@FXML protected void onPressReinscriere(){
+		Patient patient = patientTable.getSelectionModel().getSelectedItem();
 
+		if(patient == null)
+			return;
+		if(patient.getRegistrationRecord().isRegistered())
+			return;
+
+		dataLoader.makeRegisterPatientRequest(patient);
+		reinscriereButton.setDisable(true);
 	}
 
 	@FXML protected void onPressIesire(){
@@ -146,11 +166,17 @@ public class PersonTabController implements ControllerInterface{
 			return;
 
 		dataLoader.makeUnregisterPatientRequest(patient);
-
+		iesireButton.setDisable(true);
 	}
 
 	@FXML protected void onPressDecesPersoana(){
+		Patient patient = patientTable.getSelectionModel().getSelectedItem();
 
+		if(patient == null)
+			return;
+		
+		dataLoader.makeDeceasedPatientRequest(patient);
+		decesPersoanaButton.setDisable(true);
 	}
 
 	@FXML protected void onPressTiparire(){
