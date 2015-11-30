@@ -36,6 +36,9 @@ public class PatientLoader {
 		case RequestCodes.DELETE_PATIENT_REQUEST:
 			processDeletePatientRequest(request);
 			break;
+		case RequestCodes.UNREGISTER_PATIENT_REQUEST:
+			processUnregisterPatientRequest(request);
+			break;
 		}
 	}
 
@@ -53,24 +56,21 @@ public class PatientLoader {
 		}
 		dataLoader.processGuiTask(request);
 	}
-//UpdatePatientRecord
+	//UpdatePatientRecord
 	public void makeUpdatePatientAddressRequest(Address address){
 		dataLoader.makeRequest(new Request(RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST, address));
 	}
-	
+
 	private void processUpdatePatientAddressRequest(Request request){
 		LOG.info(request.getMessage());
 
-		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
-			
-		}
-		else{
+		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
 			GUIUtils.showErrorDialog("Patient Address Update Request Error", request.getMessage());
 		}
 
 		dataLoader.processGuiTask(request);
 	}
-//GetPatientRecordByCNP
+	//GetPatientRecordByCNP
 	public void makePatientRecordByCNPRequest(String cnp){
 		dataLoader.makeRequest(new Request(RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST, cnp));
 	}
@@ -78,16 +78,13 @@ public class PatientLoader {
 	private void processPatientRecordByCNPRequest(Request request){
 		LOG.info(request.getMessage());
 
-		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
-
-		}
-		else{
+		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
 			GUIUtils.showErrorDialog("Patient Record Request Error", request.getMessage());
 		}
 
 		dataLoader.processGuiTask(request);
 	}
-//PatientList
+	//PatientList
 	public void loadPatientList(){
 		dataLoader.makeRequest(new Request(RequestCodes.PATIENT_LIST_REQUEST, null));
 	}
@@ -109,22 +106,36 @@ public class PatientLoader {
 			//fatal
 		}
 	}
-//DeletePatient
+	//DeletePatient
 
 	public void makeDeletePatientRequest(int patientID) {
 		dataLoader.makeRequest(new Request(RequestCodes.DELETE_PATIENT_REQUEST, patientID));
 	}
-	
+
 	private void processDeletePatientRequest(Request request) {
 		LOG.info(request.getMessage());
 
-		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
-		//TODO: Maybe refactor
-		}
-		else{
+		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
 			GUIUtils.showErrorDialog("Couldn't delete patient", request.getMessage());
 		}
 
 		dataLoader.processGuiTask(request);
 	}
+	//UnregisterPatient
+
+	public void makeUnregisterPatientRequest(int patientID) {
+		dataLoader.makeRequest(new Request(RequestCodes.UNREGISTER_PATIENT_REQUEST, patientID));
+
+	}
+
+	private void processUnregisterPatientRequest(Request request) {
+		LOG.info(request.getMessage());
+
+		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
+			GUIUtils.showErrorDialog("Couldn't unregister patient", request.getMessage());
+		}
+
+		dataLoader.processGuiTask(request);
+	}
+
 }

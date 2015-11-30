@@ -2,6 +2,7 @@ package medproject.medclient.dataLoader;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,8 +16,8 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import medproject.medclient.concurrency.AddPatientTask;
-import medproject.medclient.concurrency.DeletePatientTask;
 import medproject.medclient.concurrency.PatientRecordListTask;
+import medproject.medclient.concurrency.PatientTabTask;
 import medproject.medclient.concurrency.UpdateAddressTask;
 import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
@@ -170,6 +171,17 @@ public class DataLoader implements Runnable{
 			}
 		}
 	}
+	
+	public void unregisterPatient(Patient patient, Date unregistrationDate) {
+		patient.getRegistrationRecord().setUnregistrationDate(unregistrationDate);
+		patient.getRegistrationRecord().setRegistered(false);
+		
+		int position = patientList.indexOf(patient);
+		if(position != -1){
+			patientList.set(position, null);
+			patientList.set(position, patient);
+		}
+	}
 
 	public ObservableList<Patient> getPatientList(){
 		return patientList;
@@ -200,7 +212,15 @@ public class DataLoader implements Runnable{
 			return;
 
 		patientLoader.makeDeletePatientRequest(patient.getPatientID());
-		addGuiTask(new DeletePatientTask(this, patient));
+		addGuiTask(new PatientTabTask(this, patient, RequestCodes.DELETE_PATIENT_REQUEST, "Se sterge pacientul..."));
+	}
+	
+	public void makeUnregisterPatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		patientLoader.makeUnregisterPatientRequest(patient.getPatientID());
+		addGuiTask(new PatientTabTask(this, patient, RequestCodes.UNREGISTER_PATIENT_REQUEST, "Se scoate pacientul din lista..."));
 	}
 	
 	public void processGuiTask(Request request){

@@ -91,15 +91,20 @@ public class PersonTabController implements ControllerInterface{
 				if(newValue == null){
 					stergePersoanaButton.setDisable(true);
 				}
-				else if(newValue.getRegistrationRecord().isRegistered())
+				else if(newValue.getRegistrationRecord().isRegistered()){
+					iesireButton.setDisable(false);
 					stergePersoanaButton.setDisable(true);
-				else
+				}
+				else{
+					iesireButton.setDisable(true);
 					stergePersoanaButton.setDisable(false);
+				}
 			}
 
 		});
 		modificaPersoanaButton.disableProperty().bind(patientTable.getSelectionModel().selectedItemProperty().isNull());
 		stergePersoanaButton.setDisable(true);
+		iesireButton.setDisable(true);
 	}
 
 	@FXML protected void onPressAdaugaPersoana(){
@@ -133,6 +138,14 @@ public class PersonTabController implements ControllerInterface{
 	}
 
 	@FXML protected void onPressIesire(){
+		Patient patient = patientTable.getSelectionModel().getSelectedItem();
+
+		if(patient == null)
+			return;
+		if(!patient.getRegistrationRecord().isRegistered())
+			return;
+
+		dataLoader.makeUnregisterPatientRequest(patient);
 
 	}
 
