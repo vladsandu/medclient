@@ -1,9 +1,14 @@
 package medproject.medclient.graphicalInterface.mainWindow.personTabScene;
 
+import java.util.function.Predicate;
+
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -12,6 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -65,25 +71,143 @@ public class PersonTabController implements ControllerInterface{
 	public void init(final DataLoader dataLoader, Stage stage) {
 		this.dataLoader = dataLoader;
 
-		patientTable.setItems(dataLoader.getPatientList());
-
 		patientTable.setEditable(false);
+		
 		setColumnValues();
-		setRadioButtonGroups();
+		setTableFilters();
 		setListeners();
 	}
 
-	private void setListeners() {
-		patientTable.getSelectionModel().clearSelection();
+	private void setTableFilters() {
+
+		setRadioButtonGroups();
 		
+		searchTypeBox.setItems(FXCollections.observableArrayList(
+				"Nume", "CNP", "PID"));
+		searchTypeBox.getSelectionModel().select(0);
+		
+		final FilteredList<Patient> filteredData = new FilteredList<Patient>(dataLoader.getPatientList());
+
+		patientSearchField.textProperty().addListener(new ChangeListener<String>(){
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+				filteredData.setPredicate(new Predicate<Patient>(){
+
+					@Override
+					public boolean test(Patient patient) {
+						if(newValue == null)
+							return true;
+						if(newValue.isEmpty())
+							return true;
+						if(patient == null)
+							return false;
+			
+						String searchString = newValue.toLowerCase();
+						
+						switch(searchTypeBox.getSelectionModel().getSelectedItem()){
+						case "Nume":
+							if(patient.getPatientRecord().getFullName().toLowerCase().contains(searchString))
+								return true;
+							break;
+						case "CNP":
+							if(patient.getPatientRecord().getCNP().toLowerCase().contains(searchString))
+								return true;
+							break;
+						case "PID":
+							if(Integer.toString(patient.getPatientRecord().getPERSON_ID()).toLowerCase().contains(searchString))
+								return true;
+							break;
+						}
+						
+						return false;
+					}
+				});
+			}
+		});
+		
+		insuredRadioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Toggle> observable, final Toggle oldValue, final Toggle newValue) {
+				filteredData.setPredicate(new Predicate<Patient>(){
+
+					@Override
+					public boolean test(Patient patient) {
+						String currentID = newValue.getUserData().toString();
+						if(patient == null)
+							return false;
+						
+						boolean insurance = patient.getPatientRecord().isInsured();
+						
+						if(currentID.equals(allInsuredPatientRadio.getUserData().toString())){
+							return true;
+						}
+						else if(currentID.equals(insuredPatientRadio.getUserData().toString())){
+							return insurance;
+						}
+						else if(currentID.equals(uninsuredPatientRadio.getUserData().toString())){
+							return !insurance;
+						}
+						
+						return false;
+					}
+				});
+			}
+		});
+
+		registeredRadioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Toggle> observable, final Toggle oldValue, final Toggle newValue) {
+				filteredData.setPredicate(new Predicate<Patient>(){
+
+					@Override
+					public boolean test(Patient patient) {
+						String currentID = newValue.getUserData().toString();
+						if(patient == null)
+							return false;
+						
+						boolean registered = patient.getRegistrationRecord().isRegistered();
+						
+						if(currentID.equals(allRegisteredPatientRadio.getUserData().toString())){
+							return true;
+						}
+						else if(currentID.equals(registeredPatientRadio.getUserData().toString())){
+							return registered;
+						}
+						else if(currentID.equals(unregisteredPatientRadio.getUserData().toString())){
+							return !registered;
+						}
+						
+						return false;
+					}
+				});
+			}	
+		});
+		
+		
+		SortedList<Patient> sortedData = new SortedList<>(filteredData);
+		sortedData.comparatorProperty().bind(patientTable.comparatorProperty());
 		dataLoader.getPatientList().addListener(new ListChangeListener<Patient>(){
 
 			@Override
 			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Patient> event) {
-				patientTable.setItems(dataLoader.getPatientList());
+				String value = patientSearchField.getText();
+				patientSearchField.setText(null);
+				patientSearchField.setText(value);
 			}
-		});//useless maybe?
+			
+		});
 
+
+		patientTable.setItems(sortedData);
+	}
+
+
+	private void setListeners() {
+		patientTable.getSelectionModel().clearSelection();
+		
 		patientTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Patient>(){
 
 			@Override
@@ -174,7 +298,7 @@ public class PersonTabController implements ControllerInterface{
 
 		if(patient == null)
 			return;
-		
+
 		dataLoader.makeDeceasedPatientRequest(patient);
 		decesPersoanaButton.setDisable(true);
 	}
@@ -192,12 +316,25 @@ public class PersonTabController implements ControllerInterface{
 		this.registeredRadioGroup = new ToggleGroup();
 
 		allInsuredPatientRadio.setToggleGroup(insuredRadioGroup);
+		allInsuredPatientRadio.setUserData("allInsuredPatient");
+		allInsuredPatientRadio.setSelected(true);
+		
 		insuredPatientRadio.setToggleGroup(insuredRadioGroup);
+		insuredPatientRadio.setUserData("insuredPatient");
+		
 		uninsuredPatientRadio.setToggleGroup(insuredRadioGroup);
+		uninsuredPatientRadio.setUserData("uninsuredPatient");
 
 		allRegisteredPatientRadio.setToggleGroup(registeredRadioGroup);
+		allRegisteredPatientRadio.setUserData("allRegisteredPatient");
+		allRegisteredPatientRadio.setSelected(true);
+		
 		registeredPatientRadio.setToggleGroup(registeredRadioGroup);
+		registeredPatientRadio.setUserData("registeredPatient");
+		
 		unregisteredPatientRadio.setToggleGroup(registeredRadioGroup);
+		unregisteredPatientRadio.setUserData("unregisteredPatient");
+		
 	}
 
 	private void setColumnValues(){
