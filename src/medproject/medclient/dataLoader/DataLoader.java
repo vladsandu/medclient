@@ -23,9 +23,11 @@ import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonControll
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController;
 import medproject.medclient.netHandler.NetConnectionThread;
+import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.examination.Examination;
 import medproject.medlibrary.logging.LogWriter;
 import medproject.medlibrary.patient.Address;
 import medproject.medlibrary.patient.Patient;
@@ -48,6 +50,7 @@ public class DataLoader implements Runnable{
 	private final InitialLoader initialLoader;
 	private final LoginLoader loginLoader;
 	private final PatientLoader patientLoader;
+	private final ExaminationLoader examinationLoader;
 
 	private final ObservableList<Patient> patientList;
 	private final ExecutorService executor;
@@ -66,6 +69,7 @@ public class DataLoader implements Runnable{
 		initialLoader = new InitialLoader(this);
 		loginLoader = new LoginLoader(this);
 		patientLoader = new PatientLoader(this);
+		examinationLoader = new ExaminationLoader(this);
 
 		patientList = FXCollections.observableArrayList();
 
@@ -113,6 +117,9 @@ public class DataLoader implements Runnable{
 		case RequestCodes.PATIENT_TYPE_REQUEST:
 			patientLoader.processRequest(request);
 			break;
+		case RequestCodes.EXAMINATION_TYPE_REQUEST:
+			examinationLoader.processRequest(request);
+			break;
 		}
 	}
 
@@ -124,11 +131,11 @@ public class DataLoader implements Runnable{
 
 		completedRequests.add(processingRequest);
 	}
-	
+
 	public void makeRequest(Request request){
 		pendingRequests.add(request);
 	}
-	
+
 	public void makeLoginRequest(String operatorName, String password){
 		loginLoader.makeLoginRequest(operatorName, password);
 	}
@@ -136,23 +143,41 @@ public class DataLoader implements Runnable{
 	public void makeWindowRequest(Runnable runnable){
 		mainWindow.runAndWait(runnable);
 	}
-
-	public void addPatient(final Patient patient){
+	
+	public void addPatient(final Patient patient, boolean isLoading){
+		if(isLoading){
+			patientList.add(patient);
+			return;
+		}
+		
 		makeWindowRequest(new Runnable(){
 
 			@Override
 			public void run() {
 				patientList.add(patient);	
 			}
-			
+
 		});
 	}
-	
+	//Refactor
+	public void addExamination(Examination examination) {
+		for(Patient patient : patientList){
+			if(patient.getPatientID() == examination.getPatientID()){
+				patient.addExamination(examination);
+				return;
+			}
+		}
+		
+		LOG.severe("Couldn't find patient matching the examination");
+		GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");
+		
+	}
+
 	public void deletePatient(Patient patient) {
 		//TODO: delete the consultations as well
 		patientList.remove(patient);
 	}
-	
+
 	public void updatePatientAddress(final Address address){
 		for(final Patient patient : patientList){
 			if(patient.getPatientRecord().getPERSON_ID() == address.getPersonID()){
@@ -165,17 +190,17 @@ public class DataLoader implements Runnable{
 						patientList.set(position, null);
 						patientList.set(position, patient);
 					}
-					
+
 				});
 				break;
 			}
 		}
 	}
-	
+
 	public void unregisterPatient(Patient patient, Date unregistrationDate) {
 		patient.getRegistrationRecord().setUnregistrationDate(unregistrationDate);
 		patient.getRegistrationRecord().setRegistered(false);
-		
+
 		updatePatientList(patient);
 	}
 
@@ -183,18 +208,18 @@ public class DataLoader implements Runnable{
 		patient.getRegistrationRecord().setRegistrationDate(registrationDate);
 		patient.getRegistrationRecord().setUnregistrationDate(null);
 		patient.getRegistrationRecord().setRegistered(true);
-		
+
 		updatePatientList(patient);
 	}
-	
+
 	public void makePatientDeceased(Patient patient, Date deceaseDate) {
 		patient.getRegistrationRecord().setUnregistrationDate(deceaseDate);
 		patient.getRegistrationRecord().setRegistered(false);
 		patient.getPatientRecord().setDeceaseDate(deceaseDate);
-		
+
 		updatePatientList(patient);
 	}
-	
+
 	private void updatePatientList(Patient patient){
 		int position = patientList.indexOf(patient);
 		if(position != -1){
@@ -202,8 +227,8 @@ public class DataLoader implements Runnable{
 			patientList.set(position, patient);
 		}
 	}
-	
-	
+
+
 	public ObservableList<Patient> getPatientList(){
 		return patientList;
 	}
@@ -227,7 +252,7 @@ public class DataLoader implements Runnable{
 		patientLoader.makeAddPatientRequest(pid, pin);
 		addGuiTask(new AddPatientTask(this, controller));	
 	}
-	
+
 	public void makeDeletePatientRequest(Patient patient){
 		if(patient == null)
 			return;
@@ -243,7 +268,7 @@ public class DataLoader implements Runnable{
 		patientLoader.makeDeceasedPatientRequest(patient.getPatientID());
 		addGuiTask(new PatientTabTask(this, patient, RequestCodes.DECEASED_PATIENT_REQUEST, "Se actualizeaza datele..."));
 	}
-	
+
 	public void makeUnregisterPatientRequest(Patient patient){
 		if(patient == null)
 			return;
@@ -251,7 +276,7 @@ public class DataLoader implements Runnable{
 		patientLoader.makeUnregisterPatientRequest(patient.getPatientID());
 		addGuiTask(new PatientTabTask(this, patient, RequestCodes.UNREGISTER_PATIENT_REQUEST, "Se dezinscrie pacientul..."));
 	}
-	
+
 	public void makeRegisterPatientRequest(Patient patient){
 		if(patient == null)
 			return;
@@ -259,7 +284,7 @@ public class DataLoader implements Runnable{
 		patientLoader.makeRegisterPatientRequest(patient.getPatientID());
 		addGuiTask(new PatientTabTask(this, patient, RequestCodes.REGISTER_PATIENT_REQUEST, "Se inscrie pacientul..."));
 	}
-	
+
 	public void processGuiTask(Request request){
 		synchronized(guiTasks){
 			for(Iterator<CustomTask> it = guiTasks.iterator(); it.hasNext();){
@@ -305,6 +330,10 @@ public class DataLoader implements Runnable{
 
 	public List<CustomTask> getGuiTasks() {
 		return guiTasks;
+	}
+
+	public ExaminationLoader getExaminationLoader() {
+		return examinationLoader;
 	}
 
 }
