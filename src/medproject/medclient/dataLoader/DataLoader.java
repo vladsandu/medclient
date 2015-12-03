@@ -27,6 +27,7 @@ import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.examination.Diagnosis;
 import medproject.medlibrary.examination.Examination;
 import medproject.medlibrary.logging.LogWriter;
 import medproject.medlibrary.patient.Address;
@@ -51,6 +52,7 @@ public class DataLoader implements Runnable{
 	private final LoginLoader loginLoader;
 	private final PatientLoader patientLoader;
 	private final ExaminationLoader examinationLoader;
+	private final DiagnosisLoader diagnosisLoader;
 
 	private final ObservableList<Patient> patientList;
 	private final ExecutorService executor;
@@ -70,6 +72,7 @@ public class DataLoader implements Runnable{
 		loginLoader = new LoginLoader(this);
 		patientLoader = new PatientLoader(this);
 		examinationLoader = new ExaminationLoader(this);
+		diagnosisLoader = new DiagnosisLoader(this);
 
 		patientList = FXCollections.observableArrayList();
 
@@ -119,6 +122,9 @@ public class DataLoader implements Runnable{
 			break;
 		case RequestCodes.EXAMINATION_TYPE_REQUEST:
 			examinationLoader.processRequest(request);
+			break;
+		case RequestCodes.DIAGNOSIS_TYPE_REQUEST:
+			diagnosisLoader.processRequest(request);
 			break;
 		}
 	}
@@ -172,6 +178,18 @@ public class DataLoader implements Runnable{
 		GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");
 		
 	}
+	
+	public void addDiagnosis(Diagnosis diagnosis) {
+		Examination examination = examinationLoader.getExaminationByID(diagnosis.getExaminationID());
+		
+		if(examination == null){
+			LOG.severe("Couldn't find examination matching the diagnosis");
+			GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");	
+		}
+		else{
+			examination.addDiagnosis(diagnosis);
+		}
+	}
 
 	public void deletePatient(Patient patient) {
 		//TODO: delete the consultations as well
@@ -223,7 +241,7 @@ public class DataLoader implements Runnable{
 	private void updatePatientList(Patient patient){
 		int position = patientList.indexOf(patient);
 		if(position != -1){
-			patientList.set(position, null);
+			//patientList.set(position, null);
 			patientList.set(position, patient);
 		}
 	}
@@ -334,6 +352,10 @@ public class DataLoader implements Runnable{
 
 	public ExaminationLoader getExaminationLoader() {
 		return examinationLoader;
+	}
+
+	public DiagnosisLoader getDiagnosisLoader() {
+		return diagnosisLoader;
 	}
 
 }

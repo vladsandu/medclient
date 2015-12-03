@@ -27,6 +27,15 @@ public class ExaminationLoader {
 			processGUITaskRequest(request);			break;
 		}
 	}
+	
+	public Examination getExaminationByID(int id){
+		for(Patient patient : dataLoader.getPatientList())
+			for(Examination examination : patient.getExaminationList())
+				if(examination.getExaminationID() == id)
+					return examination;
+		
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	private void processExaminationListRequest(Request request) {
