@@ -30,7 +30,7 @@ public class AddPatientTask extends CustomTask{
 		if(data != null){
 			try{
 				Patient patient = (Patient) data;
-				dataLoader.addPatient(patient);
+				dataLoader.addPatient(patient, false);
 			}catch(ClassCastException e){
 				GUIUtils.showErrorDialog("Add Patient Error", "Data corrupted");
 			}

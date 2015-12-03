@@ -40,7 +40,7 @@ public class PatientLoader {
 			List<Patient> patientList = (List<Patient>) request.getDATA();
 
 			for(Patient patient : patientList)
-				dataLoader.addPatient(patient);
+				dataLoader.addPatient(patient, true);
 
 			dataLoader.getInitialLoader().setPatientsLoaded(true);
 		}
