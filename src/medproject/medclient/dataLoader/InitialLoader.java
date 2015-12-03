@@ -8,13 +8,15 @@ public class InitialLoader {
 
 	private final String[] loadingMessages = {
 		"Se incarca pacientii",
-		"Se incarca consultatiile"
+		"Se incarca consultatiile",
+		"Se incarca diagnosticele"
 	};
 	
 	private int currentRequestNumber;
 	
 	public volatile boolean patientsLoaded = false;
 	public volatile boolean examinationsLoaded = false;
+	public volatile boolean diagnosisLoaded = false;
 	
 	public InitialLoader(DataLoader dataLoader) {
 		this.dataLoader = dataLoader;
@@ -27,12 +29,12 @@ public class InitialLoader {
 		
 		dataLoader.getPatientLoader().loadPatientList();
 		dataLoader.getExaminationLoader().loadExaminationList();
-		
+		dataLoader.getDiagnosisLoader().loadDiagnosisList();
 		increaseProgress();
 	}
 
 	private boolean isLoadingComplete(){
-		if(patientsLoaded && examinationsLoaded)
+		if(patientsLoaded && examinationsLoaded && diagnosisLoaded)
 			return true;
 		return false;
 	}
@@ -44,6 +46,11 @@ public class InitialLoader {
 	
 	public void setExaminationsLoaded(boolean examinationsLoaded) {
 		this.examinationsLoaded = examinationsLoaded;
+		increaseProgress();
+	}
+
+	public void setDiagnosisLoaded(boolean diagnosisLoaded) {
+		this.diagnosisLoaded = diagnosisLoaded;
 		increaseProgress();
 	}
 
@@ -64,3 +71,4 @@ public class InitialLoader {
 		dataLoader.getMainWindow().setLoadingMessage(value);
 	}
 }
+ 
