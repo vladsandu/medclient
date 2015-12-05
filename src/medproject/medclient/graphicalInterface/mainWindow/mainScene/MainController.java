@@ -13,7 +13,8 @@ public class MainController implements ControllerInterface{
 	private DataLoader dataLoader;
 	private Stage stage;
 	@FXML TabPane mainTabPane;
-	@FXML Tab personsTab;
+	@FXML Tab persoaneTab;
+	@FXML Tab consultatiiTab;
 	
 	@Override
 	public void init(DataLoader dataLoader, Stage stage) {
@@ -23,14 +24,12 @@ public class MainController implements ControllerInterface{
 	}
 	
 	private void loadTabContent(){
-		personsTab.setContent(Navigator.getPaneFromScene(Navigator.PERSON_TAB_SCENE, stage));
+		persoaneTab.setContent(Navigator.getPaneFromScene(Navigator.PERSON_TAB_SCENE, stage));
+		consultatiiTab.setContent(Navigator.getPaneFromScene(Navigator.EXAMINATION_TAB_SCENE, stage));
 	}
 	
 	@FXML protected void onSelectPersonsTab(){
-		if(personsTab.isSelected()){
-		}
-		else{	
-		}
+		
 	}
 
 }

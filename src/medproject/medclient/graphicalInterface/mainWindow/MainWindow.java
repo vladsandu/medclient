@@ -62,7 +62,7 @@ public class MainWindow{
 			future.get();
 		}
 		catch (InterruptedException | ExecutionException e) {
-			LOG.severe("Couldn't execute task on JFX thread");
+			LOG.severe("Couldn't execute task on JFX thread: " + e.getMessage());
 		}
 	}
 	
