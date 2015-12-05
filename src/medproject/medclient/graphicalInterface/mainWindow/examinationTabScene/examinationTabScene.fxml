@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="medproject.medclient.graphicalInterface.mainWindow.examinationTabScene.ExaminationTabController">
+   <children>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="140.0" spacing="8.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="Cauta:" />
+            <TextField fx:id="examinationSearchField" />
+            <ChoiceBox fx:id="searchTypeBox" prefWidth="150.0" />
+            <Button fx:id="adaugaConsultatieButton" mnemonicParsing="false" onAction="#onPressAdaugaConsultatie" prefHeight="30.0" prefWidth="120.0" text="Adauga consultatie" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="vizualizeazaButton" mnemonicParsing="false" onAction="#onPressVizualizeaza" prefHeight="30.0" prefWidth="120.0" text="Vizualizeaza" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="stergePersoanaButton" mnemonicParsing="false" onAction="#onPressStergeConsultatie" prefHeight="30.0" prefWidth="120.0" text="Sterge consultatie" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="tiparireButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Tiparire" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="exportButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" text="Export" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding></VBox>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+         <children>
+            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </children>
+</HBox>
