@@ -20,12 +20,16 @@ public class Navigator {
 	public static final String LOADING_SCENE = "./mainWindow/loadingScene/loadingScene.fxml";
 	public static final String MAIN_SCENE = "./mainWindow/mainScene/mainScene.fxml";
 	public static final String PERSON_TAB_SCENE = "./mainWindow/personTabScene/personTabScene.fxml";
+	public static final String EXAMINATION_TAB_SCENE = "./mainWindow/examinationTabScene/examinationTabScene.fxml";
 	
 	public static final String ADD_PERSON_SCENE = "./addPersonWindow/addPersonScene.fxml";
 	public static final String PATIENT_DATA_SCENE = "./patientDataWindow/patientDataScene/patientDataScene.fxml";
 	public static final String PATIENT_RECORD_SCENE = "./patientDataWindow/patientRecordScene/patientRecordScene.fxml";
 
+	public static final String EXAMINATION_WINDOW_SCENE = "./examinationWindow/examinationWindowScene.fxml";
+	
 	public static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
+
 	
 	private static MainWindow mainWindow = null;
 	private static String currentScene = "";
