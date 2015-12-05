@@ -91,26 +91,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-               <content>
-                  <TableView fx:id="patientTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                    <columns>
-                      <TableColumn fx:id="cnpColumn" editable="false" prefWidth="102.0" text="CNP" />
-                      <TableColumn fx:id="firstNameColumn" editable="false" prefWidth="79.0" text="Nume" />
-                        <TableColumn fx:id="lastNameColumn" editable="false" prefWidth="75.0" text="Prenume" />
-                        <TableColumn fx:id="genderColumn" editable="false" prefWidth="44.0" text="Sex" />
-                        <TableColumn fx:id="categoryColumn" editable="false" prefWidth="75.0" text="Categorie" />
-                        <TableColumn fx:id="birthDateColumn" editable="false" prefWidth="94.0" text="Data Nastere" />
-                        <TableColumn fx:id="deceaseDateColumn" editable="false" prefWidth="75.0" text="Data Deces" />
-                        <TableColumn fx:id="registrationDateColumn" editable="false" prefWidth="85.0" text="Data Inscriere" />
-                        <TableColumn fx:id="unregistrationDateColumn" editable="false" prefWidth="65.0" text="Data Iesire" />
-                        <TableColumn fx:id="countyColumn" editable="false" prefWidth="75.0" text="Judet" />
-                        <TableColumn fx:id="cityColumn" editable="false" prefWidth="75.0" text="Localitate" />
-                        <TableColumn fx:id="streetColumn" prefWidth="75.0" text="Strada" />
-                    </columns>
-                  </TableView>
-               </content>
-            </ScrollPane>
+            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>
