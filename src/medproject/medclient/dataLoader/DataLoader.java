@@ -27,11 +27,13 @@ import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
-import medproject.medlibrary.examination.Diagnosis;
+import medproject.medlibrary.diagnosis.Diagnosis;
 import medproject.medlibrary.examination.Examination;
 import medproject.medlibrary.logging.LogWriter;
+import medproject.medlibrary.medication.Medication;
 import medproject.medlibrary.patient.Address;
 import medproject.medlibrary.patient.Patient;
+import medproject.medlibrary.prescription.Prescription;
 
 public class DataLoader implements Runnable{
 
@@ -53,6 +55,8 @@ public class DataLoader implements Runnable{
 	private final PatientLoader patientLoader;
 	private final ExaminationLoader examinationLoader;
 	private final DiagnosisLoader diagnosisLoader;
+	private final PrescriptionLoader prescriptionLoader;
+	private final MedicationLoader medicationLoader;
 
 	private final ObservableList<Patient> patientList;
 	private final ExecutorService executor;
@@ -73,6 +77,8 @@ public class DataLoader implements Runnable{
 		patientLoader = new PatientLoader(this);
 		examinationLoader = new ExaminationLoader(this);
 		diagnosisLoader = new DiagnosisLoader(this);
+		prescriptionLoader = new PrescriptionLoader(this);
+		medicationLoader = new MedicationLoader(this);
 
 		patientList = FXCollections.observableArrayList();
 
@@ -125,6 +131,12 @@ public class DataLoader implements Runnable{
 			break;
 		case RequestCodes.DIAGNOSIS_TYPE_REQUEST:
 			diagnosisLoader.processRequest(request);
+			break;
+		case RequestCodes.PRESCRIPTION_TYPE_REQUEST:
+			prescriptionLoader.processRequest(request);
+			break;
+		case RequestCodes.MEDICATION_TYPE_REQUEST:
+			medicationLoader.processRequest(request);
 			break;
 		}
 	}
@@ -191,6 +203,31 @@ public class DataLoader implements Runnable{
 		}
 	}
 
+	public void addPrescription(Prescription prescription) {
+		Examination examination = examinationLoader.getExaminationByID(prescription.getExaminationID());
+		
+		if(examination == null){
+			LOG.severe("Couldn't find examination matching the prescription");
+			GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");	
+		}
+		else{
+			examination.addPrescription(prescription);
+		}
+	}
+	
+	public void addMedication(Medication medication) {
+		Prescription prescription = prescriptionLoader.getPrescriptionByID(medication.getPrescriptionID());
+		
+		if(prescription == null){
+			LOG.severe("Couldn't find prescription matching the medication");
+			GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");	
+		}
+		else{
+			prescription.addMedication(medication);
+		}		
+	}
+
+	
 	public void deletePatient(Patient patient) {
 		//TODO: delete the consultations as well
 		patientList.remove(patient);
@@ -358,4 +395,11 @@ public class DataLoader implements Runnable{
 		return diagnosisLoader;
 	}
 
+	public PrescriptionLoader getPrescriptionLoader() {
+		return prescriptionLoader;
+	}
+
+	public MedicationLoader getMedicationLoader() {
+		return medicationLoader;
+	}
 }
