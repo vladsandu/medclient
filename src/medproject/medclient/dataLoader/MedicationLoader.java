@@ -86,4 +86,12 @@ public class MedicationLoader {
 	public void loadMedicationList() {
 		dataLoader.makeRequest(new Request(RequestCodes.MEDICATION_LIST_REQUEST, null));
 	}
+	
+	public Drug getDrugForID(int drugID){
+		for(Drug drug : drugList)
+			if(drug.getID() == drugID)
+				return drug;
+		
+		return null;
+	}
 }
