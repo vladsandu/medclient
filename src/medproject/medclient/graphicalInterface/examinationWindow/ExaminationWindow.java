@@ -11,9 +11,11 @@ import medproject.medlibrary.examination.Examination;
 public class ExaminationWindow extends Stage{
 	
 	private final Examination examination;
+	private final boolean newExamination;
 	
-	public ExaminationWindow(Examination examination){
+	public ExaminationWindow(Examination examination, boolean newExamination){
 		this.examination = examination;
+		this.newExamination = newExamination;
 		
 		if(examination == null)
 			setTitle("Adauga Consultatie");
@@ -25,11 +27,19 @@ public class ExaminationWindow extends Stage{
                 close();
             }
         });
-		setScene(Navigator.getScene(Navigator.EXAMINATION_WINDOW_SCENE, this));
-		initStyle(StageStyle.UTILITY);
+		if(examination == null)
+			setScene(Navigator.getScene(Navigator.ADD_EXAMINATION_SCENE, this));
+		else
+			setScene(Navigator.getScene(Navigator.MAIN_EXAMINATION_SCENE, this));
+		
 		initModality(Modality.APPLICATION_MODAL);   
 	}
-	
-	
-	
+
+	public Examination getExamination() {
+		return examination;
+	}
+
+	public boolean isNewExamination() {
+		return newExamination;
+	}
 }
