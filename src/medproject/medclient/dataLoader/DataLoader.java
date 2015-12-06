@@ -15,11 +15,13 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import medproject.medclient.concurrency.AddExaminationTask;
 import medproject.medclient.concurrency.AddPatientTask;
 import medproject.medclient.concurrency.PatientRecordListTask;
 import medproject.medclient.concurrency.PatientTabTask;
 import medproject.medclient.concurrency.UpdateAddressTask;
 import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
+import medproject.medclient.graphicalInterface.examinationWindow.addExaminationScene.AddExaminationController;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
 import medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController;
 import medproject.medclient.netHandler.NetConnectionThread;
@@ -59,6 +61,8 @@ public class DataLoader implements Runnable{
 	private final MedicationLoader medicationLoader;
 
 	private final ObservableList<Patient> patientList;
+	private final ObservableList<Examination> examinationList;
+	
 	private final ExecutorService executor;
 
 	public DataLoader(MainWindow mainWindow) {
@@ -81,6 +85,7 @@ public class DataLoader implements Runnable{
 		medicationLoader = new MedicationLoader(this);
 
 		patientList = FXCollections.observableArrayList();
+		examinationList = FXCollections.observableArrayList();
 
 		connectionStatus = new AtomicBoolean(false);
 		thread = new Thread(this);
@@ -182,6 +187,8 @@ public class DataLoader implements Runnable{
 		for(Patient patient : patientList){
 			if(patient.getPatientID() == examination.getPatientID()){
 				patient.addExamination(examination);
+				examination.setPatient(patient);
+				examinationList.add(examination);
 				return;
 			}
 		}
@@ -200,6 +207,7 @@ public class DataLoader implements Runnable{
 		}
 		else{
 			examination.addDiagnosis(diagnosis);
+			diagnosis.setDiagnosisInfo(diagnosisLoader.getDiagnosisInfoForID(diagnosis.getDiagnosisID()));
 		}
 	}
 
@@ -224,6 +232,7 @@ public class DataLoader implements Runnable{
 		}
 		else{
 			prescription.addMedication(medication);
+			medication.setDrug(medicationLoader.getDrugForID(medication.getDrugID()));
 		}		
 	}
 
@@ -307,7 +316,7 @@ public class DataLoader implements Runnable{
 		patientLoader.makeAddPatientRequest(pid, pin);
 		addGuiTask(new AddPatientTask(this, controller));	
 	}
-
+	
 	public void makeDeletePatientRequest(Patient patient){
 		if(patient == null)
 			return;
@@ -340,6 +349,12 @@ public class DataLoader implements Runnable{
 		addGuiTask(new PatientTabTask(this, patient, RequestCodes.REGISTER_PATIENT_REQUEST, "Se inscrie pacientul..."));
 	}
 
+	public void makeAddExaminationRequest(AddExaminationController controller, Examination examination, int pin){
+		examinationLoader.makeAddExaminationRequest(examination, pin);
+		addGuiTask(new AddExaminationTask(this, controller));	
+	}
+
+	
 	public void processGuiTask(Request request){
 		synchronized(guiTasks){
 			for(Iterator<CustomTask> it = guiTasks.iterator(); it.hasNext();){
@@ -401,5 +416,9 @@ public class DataLoader implements Runnable{
 
 	public MedicationLoader getMedicationLoader() {
 		return medicationLoader;
+	}
+
+	public ObservableList<Examination> getExaminationList() {
+		return examinationList;
 	}
 }
