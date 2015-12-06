@@ -23,6 +23,8 @@ public class ExaminationLoader {
 		switch(request.getREQUEST_CODE()){
 		case RequestCodes.EXAMINATION_LIST_REQUEST:
 			processExaminationListRequest(request);	break;
+		case RequestCodes.ADD_EXAMINATION_REQUEST:
+			processGUITaskRequest(request);			break;
 		default:	
 			processGUITaskRequest(request);			break;
 		}
@@ -68,5 +70,9 @@ public class ExaminationLoader {
 
 	public void loadExaminationList() {
 		dataLoader.makeRequest(new Request(RequestCodes.EXAMINATION_LIST_REQUEST, null));
+	}
+
+	public void makeAddExaminationRequest(Examination examination, int pin) {
+		dataLoader.makeRequest(new Request(RequestCodes.ADD_EXAMINATION_REQUEST, examination, pin));
 	}
 }
