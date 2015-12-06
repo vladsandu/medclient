@@ -26,9 +26,15 @@ public class Navigator {
 	public static final String PATIENT_DATA_SCENE = "./patientDataWindow/patientDataScene/patientDataScene.fxml";
 	public static final String PATIENT_RECORD_SCENE = "./patientDataWindow/patientRecordScene/patientRecordScene.fxml";
 
-	public static final String EXAMINATION_WINDOW_SCENE = "./examinationWindow/examinationWindowScene.fxml";
+	public static final String MAIN_EXAMINATION_SCENE = "./examinationWindow/mainExaminationScene/mainExaminationScene.fxml";
+	public static final String ADD_EXAMINATION_SCENE = "./examinationWindow/addExaminationScene/addExaminationScene.fxml";
+	public static final String EXAMINATION_DIAGNOSIS_TAB_SCENE = "./examinationWindow/diagnosisTabScene/diagnosisTabScene.fxml";
+
+	public static final String DIAGNOSIS_WINDOW_SCENE = "./diagnosisWindow/diagnosisWindowScene.fxml";
+
 	
 	public static final String DEFAULT_STYLESHEET = "medproject/medclient/graphicalInterface/style/style.css";
+
 
 	
 	private static MainWindow mainWindow = null;
@@ -62,6 +68,7 @@ public class Navigator {
 					
 					Navigator.currentController = currentController;
 					currentScene = fxml;
+					mainWindow.getPrimaryWindow().centerOnScreen();
 				} catch (IOException e) {
 					LOG.severe("Cannot find fxml file location for value: " + fxml);
 				}				
