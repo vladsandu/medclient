@@ -1,9 +1,10 @@
 package medproject.medclient.dataLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
@@ -16,11 +17,11 @@ import medproject.medlibrary.logging.LogWriter;
 public class DiagnosisLoader {
 	private final Logger LOG = LogWriter.getLogger(this.getClass().getName());
 	private final DataLoader dataLoader;
-	private final List<DiagnosisInfo> diagnosisInfoList;
+	private final ObservableList<DiagnosisInfo> diagnosisInfoList;
 	
 	public DiagnosisLoader(DataLoader dataLoader){
 		this.dataLoader = dataLoader;
-		diagnosisInfoList = new ArrayList<DiagnosisInfo>();
+		diagnosisInfoList = FXCollections.observableArrayList();
 	}
 
 	public void processRequest(Request request){
@@ -87,5 +88,18 @@ public class DiagnosisLoader {
 	
 	public void loadDiagnosisInfoList() {
 		dataLoader.makeRequest(new Request(RequestCodes.DIAGNOSIS_INFO_LIST_REQUEST, null));
+	}
+	
+	public DiagnosisInfo getDiagnosisInfoForID(int diagnosisID){
+		for(DiagnosisInfo info : diagnosisInfoList){
+			if(info.getID() == diagnosisID)
+				return info;
+		}
+		
+		return null;
+	}
+
+	public ObservableList<DiagnosisInfo> getDiagnosisInfoList() {
+		return diagnosisInfoList;
 	}
 }
