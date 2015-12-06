@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="medproject.medclient.graphicalInterface.diagnosisWindow.DiagnosisWindowController">
+   <children>
+      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="100.0" spacing="10.0" HBox.hgrow="NEVER">
+               <children>
+                  <Label text="Diagnostice" />
+                  <TextField fx:id="searchTextField" />
+                  <Label text="Cauta dupa:" />
+                  <VBox maxWidth="1.7976931348623157E308" prefWidth="100.0" spacing="10.0" VBox.vgrow="NEVER">
+                     <children>
+                        <RadioButton fx:id="codRadio" mnemonicParsing="false" text="Cod" />
+                        <RadioButton fx:id="numeRadio" mnemonicParsing="false" text="Nume" />
+                        <RadioButton fx:id="toateRadio" mnemonicParsing="false" text="Toate" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <ScrollPane fx:id="diagnosisScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="15.0" VBox.vgrow="NEVER">
+         <children>
+            <Label text="De la:" />
+            <TextField fx:id="dataIntrareTextField" />
+            <Label text="Pana la:" />
+            <TextField fx:id="dataIesireTextField" />
+            <CheckBox fx:id="activCheckBox" mnemonicParsing="false" onAction="#onActionActivCheckBox" text="Activ" />
+         </children>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </HBox>
+      <HBox maxHeight="-Infinity" prefHeight="100.0" spacing="10.0">
+         <children>
+            <Label text="Observatii:" />
+            <TextArea fx:id="observatiiTextArea" prefHeight="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+         <padding>
+            <Insets left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="NEVER">
+         <children>
+            <Button fx:id="adaugaButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onPressAdauga" prefHeight="50.0" prefWidth="80.0" text="Adauga" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="NEVER" />
+            <Button fx:id="anuleazaButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onPressAnuleaza" prefHeight="50.0" prefWidth="80.0" text="Anuleaza" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>
