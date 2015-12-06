@@ -22,7 +22,7 @@
                   <Insets />
                </VBox.margin>
             </Button>
-            <Button fx:id="stergePersoanaButton" mnemonicParsing="false" onAction="#onPressStergeConsultatie" prefHeight="30.0" prefWidth="120.0" text="Sterge consultatie" textAlignment="CENTER">
+            <Button fx:id="stergeConsultatieButton" mnemonicParsing="false" onAction="#onPressStergeConsultatie" prefHeight="30.0" prefWidth="120.0" text="Sterge consultatie" textAlignment="CENTER">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
