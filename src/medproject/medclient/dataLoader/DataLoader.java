@@ -15,20 +15,13 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import medproject.medclient.concurrency.AddExaminationTask;
-import medproject.medclient.concurrency.AddPatientTask;
-import medproject.medclient.concurrency.PatientRecordListTask;
-import medproject.medclient.concurrency.PatientTabTask;
-import medproject.medclient.concurrency.UpdateAddressTask;
-import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
-import medproject.medclient.graphicalInterface.examinationWindow.addExaminationScene.AddExaminationController;
 import medproject.medclient.graphicalInterface.mainWindow.MainWindow;
-import medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController;
 import medproject.medclient.netHandler.NetConnectionThread;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.CustomTask;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
+import medproject.medlibrary.concurrency.RequestStatus;
 import medproject.medlibrary.diagnosis.Diagnosis;
 import medproject.medlibrary.examination.Examination;
 import medproject.medlibrary.logging.LogWriter;
@@ -62,7 +55,7 @@ public class DataLoader implements Runnable{
 
 	private final ObservableList<Patient> patientList;
 	private final ObservableList<Examination> examinationList;
-	
+
 	private final ExecutorService executor;
 
 	public DataLoader(MainWindow mainWindow) {
@@ -159,20 +152,17 @@ public class DataLoader implements Runnable{
 		pendingRequests.add(request);
 	}
 
-	public void makeLoginRequest(String operatorName, String password){
-		loginLoader.makeLoginRequest(operatorName, password);
-	}
 
 	public void makeWindowRequest(Runnable runnable){
 		mainWindow.runAndWait(runnable);
 	}
-	
+
 	public void addPatient(final Patient patient, boolean isLoading){
 		if(isLoading){
 			patientList.add(patient);
 			return;
 		}
-		
+
 		makeWindowRequest(new Runnable(){
 
 			@Override
@@ -192,15 +182,15 @@ public class DataLoader implements Runnable{
 				return;
 			}
 		}
-		
+
 		LOG.severe("Couldn't find patient matching the examination");
 		GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");
-		
+
 	}
-	
+
 	public void addDiagnosis(Diagnosis diagnosis) {
 		Examination examination = examinationLoader.getExaminationByID(diagnosis.getExaminationID());
-		
+
 		if(examination == null){
 			LOG.severe("Couldn't find examination matching the diagnosis");
 			GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");	
@@ -211,21 +201,21 @@ public class DataLoader implements Runnable{
 		}
 	}
 
-	public void addPrescription(Prescription prescription) {
+	public void addPrescription(Prescription prescription) throws IOException {
 		Examination examination = examinationLoader.getExaminationByID(prescription.getExaminationID());
-		
+
 		if(examination == null){
-			LOG.severe("Couldn't find examination matching the prescription");
-			GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");	
+			throw new IOException("Couldn't find examination matching the prescription");
 		}
 		else{
 			examination.addPrescription(prescription);
+			prescription.setExamination(examination);
 		}
 	}
-	
+
 	public void addMedication(Medication medication) {
 		Prescription prescription = prescriptionLoader.getPrescriptionByID(medication.getPrescriptionID());
-		
+
 		if(prescription == null){
 			LOG.severe("Couldn't find prescription matching the medication");
 			GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");	
@@ -236,10 +226,69 @@ public class DataLoader implements Runnable{
 		}		
 	}
 
-	
+
 	public void deletePatient(Patient patient) {
 		//TODO: delete the consultations as well
 		patientList.remove(patient);
+	}
+
+	public void deleteDiagnosis(Diagnosis diagnosis) {
+		Examination examination = examinationLoader.getExaminationByID(diagnosis.getExaminationID());
+
+		if(examination == null){
+			GUIUtils.showErrorDialog("Error", "The examination doesn't exist");
+		}
+
+		for(Iterator<Diagnosis> it = examination.getDiagnosisList().iterator(); it.hasNext();){
+			Diagnosis currentDiagnosis = it.next();
+
+			if(currentDiagnosis.getID() == diagnosis.getID()){
+				it.remove();
+				return;
+			}
+		}
+
+		GUIUtils.showErrorDialog("Error", "The diagnosis doesn't exist.");
+	}
+
+	public void deleteMedication(Medication medication) {
+		Prescription prescription = prescriptionLoader.getPrescriptionByID(medication.getPrescriptionID());
+
+		if(prescription == null){
+			GUIUtils.showErrorDialog("Error", "The prescription doesn't exist");
+		}
+
+		for(Iterator<Medication> it = prescription.getMedicationList().iterator(); it.hasNext();){
+			Medication currentMedication = it.next();
+
+			if(currentMedication.getID() == medication.getID()){
+				it.remove();
+				return;
+			}
+		}
+
+		GUIUtils.showErrorDialog("Error", "The medication doesn't exist.");
+	}
+
+	public void deleteExamination(Examination examination) {
+		Patient patient = patientLoader.getPatientByID(examination.getPatientID());
+
+		if(patient == null){
+			GUIUtils.showErrorDialog("Error", "Couldn't find the patient for this examination");
+			return;
+		}
+		
+		for(Iterator<Examination> it = patient.getExaminationList().iterator(); it.hasNext();){
+			Examination tempExamination = it.next();
+			
+			if(tempExamination.getExaminationID() == examination.getExaminationID()){
+				it.remove();
+				examinationList.remove(examination);
+				return;
+			}
+		}
+		
+		GUIUtils.showErrorDialog("Error", "Couldn't find the examination");
 	}
 
 	public void updatePatientAddress(final Address address){
@@ -297,65 +346,17 @@ public class DataLoader implements Runnable{
 		return patientList;
 	}
 
-	private void addGuiTask(CustomTask task){
+	void addGuiTask(CustomTask task){
 		guiTasks.add(task);
 		executor.execute(task);
 	}
-
-	public void makePatientRecordByCNPRequest(AddPersonController controller, String cnp){
-		patientLoader.makePatientRecordByCNPRequest(cnp);
-		addGuiTask(new PatientRecordListTask(controller));
-	}
-
-	public void makeUpdatePatientAddressRequest(PatientRecordController controller, Address address){
-		patientLoader.makeUpdatePatientAddressRequest(address);
-		addGuiTask(new UpdateAddressTask(this, controller, address));
-	}
-
-	public void makeAddPatientRequest(AddPersonController controller, int pid, int pin){
-		patientLoader.makeAddPatientRequest(pid, pin);
-		addGuiTask(new AddPatientTask(this, controller));	
-	}
-	
-	public void makeDeletePatientRequest(Patient patient){
-		if(patient == null)
-			return;
-
-		patientLoader.makeDeletePatientRequest(patient.getPatientID());
-		addGuiTask(new PatientTabTask(this, patient, RequestCodes.DELETE_PATIENT_REQUEST, "Se sterge pacientul..."));
-	}
-
-	public void makeDeceasedPatientRequest(Patient patient){
-		if(patient == null)
-			return;
-
-		patientLoader.makeDeceasedPatientRequest(patient.getPatientID());
-		addGuiTask(new PatientTabTask(this, patient, RequestCodes.DECEASED_PATIENT_REQUEST, "Se actualizeaza datele..."));
-	}
-
-	public void makeUnregisterPatientRequest(Patient patient){
-		if(patient == null)
-			return;
-
-		patientLoader.makeUnregisterPatientRequest(patient.getPatientID());
-		addGuiTask(new PatientTabTask(this, patient, RequestCodes.UNREGISTER_PATIENT_REQUEST, "Se dezinscrie pacientul..."));
-	}
-
-	public void makeRegisterPatientRequest(Patient patient){
-		if(patient == null)
-			return;
-
-		patientLoader.makeRegisterPatientRequest(patient.getPatientID());
-		addGuiTask(new PatientTabTask(this, patient, RequestCodes.REGISTER_PATIENT_REQUEST, "Se inscrie pacientul..."));
-	}
-
-	public void makeAddExaminationRequest(AddExaminationController controller, Examination examination, int pin){
-		examinationLoader.makeAddExaminationRequest(examination, pin);
-		addGuiTask(new AddExaminationTask(this, controller));	
-	}
-
 	
 	public void processGuiTask(Request request){
+		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
+
+			GUIUtils.showErrorDialog("Error", request.getMessage());
+		}
+
 		synchronized(guiTasks){
 			for(Iterator<CustomTask> it = guiTasks.iterator(); it.hasNext();){
 				CustomTask task = it.next();
@@ -420,5 +421,9 @@ public class DataLoader implements Runnable{
 
 	public ObservableList<Examination> getExaminationList() {
 		return examinationList;
+	}
+
+	public LoginLoader getLoginLoader() {
+		return loginLoader;
 	}
 }

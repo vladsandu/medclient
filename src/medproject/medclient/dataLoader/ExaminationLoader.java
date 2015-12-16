@@ -1,8 +1,13 @@
+
 package medproject.medclient.dataLoader;
 
 import java.util.List;
 import java.util.logging.Logger;
 
+import medproject.medclient.concurrency.AddExaminationTask;
+import medproject.medclient.concurrency.DeleteExaminationTask;
+import medproject.medclient.graphicalInterface.examinationWindow.addExaminationScene.AddExaminationController;
+import medproject.medclient.graphicalInterface.mainWindow.examinationTabScene.ExaminationTabController;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
@@ -20,13 +25,13 @@ public class ExaminationLoader {
 	}
 
 	public void processRequest(Request request){
+		LOG.info(request.getMessage());
+		
 		switch(request.getREQUEST_CODE()){
 		case RequestCodes.EXAMINATION_LIST_REQUEST:
 			processExaminationListRequest(request);	break;
-		case RequestCodes.ADD_EXAMINATION_REQUEST:
-			processGUITaskRequest(request);			break;
 		default:	
-			processGUITaskRequest(request);			break;
+			dataLoader.processGuiTask(request);			break;
 		}
 	}
 	
@@ -41,8 +46,6 @@ public class ExaminationLoader {
 
 	@SuppressWarnings("unchecked")
 	private void processExaminationListRequest(Request request) {
-		LOG.info(request.getMessage());
-
 		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
 			List<Examination> examinationList = (List<Examination>) request.getDATA();
 
@@ -57,22 +60,17 @@ public class ExaminationLoader {
 		}
 	}
 
-	private void processGUITaskRequest(Request request) {
-		LOG.info(request.getMessage());
-
-		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
-			
-			GUIUtils.showErrorDialog("Error", request.getMessage());
-		}
-
-		dataLoader.processGuiTask(request);
-	}
-
 	public void loadExaminationList() {
 		dataLoader.makeRequest(new Request(RequestCodes.EXAMINATION_LIST_REQUEST, null));
 	}
-
-	public void makeAddExaminationRequest(Examination examination, int pin) {
+	
+	public void makeAddExaminationRequest(AddExaminationController controller, Examination examination, int pin){
 		dataLoader.makeRequest(new Request(RequestCodes.ADD_EXAMINATION_REQUEST, examination, pin));
+		dataLoader.addGuiTask(new AddExaminationTask(dataLoader, controller));	
+	}
+	
+	public void makeDeleteExaminationRequest(ExaminationTabController controller, Examination examination, int pin){
+		dataLoader.makeRequest(new Request(RequestCodes.DELETE_EXAMINATION_REQUEST, examination.getExaminationID(), pin));
+		dataLoader.addGuiTask(new DeleteExaminationTask(dataLoader, controller, examination));	
 	}
 }

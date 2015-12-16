@@ -1,8 +1,11 @@
 package medproject.medclient.dataLoader;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
+import medproject.medclient.concurrency.PrescriptionTabTask;
+import medproject.medclient.graphicalInterface.examinationWindow.prescriptionTabScene.PrescriptionTabController;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
@@ -25,10 +28,10 @@ public class PrescriptionLoader {
 		case RequestCodes.PRESCRIPTION_LIST_REQUEST:
 			processPrescriptionListRequest(request);	break;
 		default:	
-			processGUITaskRequest(request);			break;
+			dataLoader.processGuiTask(request);			break;
 		}
 	}
-	
+
 	public void loadPrescriptionList() {
 		dataLoader.makeRequest(new Request(RequestCodes.PRESCRIPTION_LIST_REQUEST, null));
 	}
@@ -40,8 +43,13 @@ public class PrescriptionLoader {
 		if(request.getStatus() == RequestStatus.REQUEST_COMPLETED){
 			List<Prescription> prescriptionList = (List<Prescription>) request.getDATA();
 
-			for(Prescription prescription : prescriptionList)
-				dataLoader.addPrescription(prescription);
+			try {
+				for(Prescription prescription : prescriptionList)
+					dataLoader.addPrescription(prescription);
+				
+			} catch (IOException e) {
+				GUIUtils.showErrorDialog("Warning", "The data might be corrupted! You should restart the application.");
+			}
 
 			dataLoader.getInitialLoader().setPrescriptionsLoaded(true);
 		}
@@ -50,16 +58,16 @@ public class PrescriptionLoader {
 			//fatal	
 		}
 	}
+	
+	public void makeAddPrescriptionRequest(PrescriptionTabController controller, Prescription prescription, int pin){
+		dataLoader.makeRequest(new Request(RequestCodes.ADD_PRESCRIPTION_REQUEST, prescription, pin));
+		dataLoader.addGuiTask(new PrescriptionTabTask(dataLoader, controller, RequestCodes.ADD_PRESCRIPTION_REQUEST, "Se adauga reteta..."));	
+	}
 
-	private void processGUITaskRequest(Request request) {
-		LOG.info(request.getMessage());
-
-		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
-			
-			GUIUtils.showErrorDialog("Error", request.getMessage());
-		}
-
-		dataLoader.processGuiTask(request);
+	public void makeCancelPrescriptionRequest(PrescriptionTabController controller,
+			Prescription prescription, int pin) {
+		dataLoader.makeRequest(new Request(RequestCodes.CANCEL_PRESCRIPTION_REQUEST, prescription.getID(), pin));
+		dataLoader.addGuiTask(new PrescriptionTabTask(dataLoader, controller, RequestCodes.CANCEL_PRESCRIPTION_REQUEST, "Se anuleaza reteta..."));	
 	}
 
 
@@ -69,7 +77,8 @@ public class PrescriptionLoader {
 				for(Prescription prescription : examination.getPrescriptionList())
 					if(prescription.getID() == id)
 						return prescription;
-		
+
 		return null;
 	}
+
 }

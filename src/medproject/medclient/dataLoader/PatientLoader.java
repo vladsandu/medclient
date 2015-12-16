@@ -3,6 +3,12 @@ package medproject.medclient.dataLoader;
 import java.util.List;
 import java.util.logging.Logger;
 
+import medproject.medclient.concurrency.AddPatientTask;
+import medproject.medclient.concurrency.PatientRecordListTask;
+import medproject.medclient.concurrency.PatientTabTask;
+import medproject.medclient.concurrency.UpdateAddressTask;
+import medproject.medclient.graphicalInterface.addPersonWindow.AddPersonController;
+import medproject.medclient.graphicalInterface.patientDataWindow.patientRecordScene.PatientRecordController;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
@@ -24,7 +30,7 @@ public class PatientLoader {
 		case RequestCodes.PATIENT_LIST_REQUEST:
 			processPatientListRequest(request);	break;
 		default:	
-			processGUITaskRequest(request);		break;
+			dataLoader.processGuiTask(request);			break;
 		}
 	}
 
@@ -49,43 +55,59 @@ public class PatientLoader {
 			//fatal
 		}
 	}
-
-	private void processGUITaskRequest(Request request) {
-		LOG.info(request.getMessage());
-
-		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
-			
-			GUIUtils.showErrorDialog("Error", request.getMessage());
-		}
-
-		dataLoader.processGuiTask(request);
-	}
 //TODO: maybe refactor
-	public void makeAddPatientRequest(int PID, int PIN){
-		dataLoader.makeRequest(new Request(RequestCodes.ADD_PATIENT_REQUEST, PID, PIN));
-	}
-
-	public void makeUpdatePatientAddressRequest(Address address){
-		dataLoader.makeRequest(new Request(RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST, address));
-	}
-
-	public void makePatientRecordByCNPRequest(String cnp){
+	public void makePatientRecordByCNPRequest(AddPersonController controller, String cnp){
 		dataLoader.makeRequest(new Request(RequestCodes.PATIENT_RECORD_BY_CNP_REQUEST, cnp));
-	}
-	
-	public void makeDeletePatientRequest(int patientID) {
-		dataLoader.makeRequest(new Request(RequestCodes.DELETE_PATIENT_REQUEST, patientID));
+		dataLoader.addGuiTask(new PatientRecordListTask(controller));
 	}
 
-	public void makeUnregisterPatientRequest(int patientID) {
-		dataLoader.makeRequest(new Request(RequestCodes.UNREGISTER_PATIENT_REQUEST, patientID));
+	public void makeUpdatePatientAddressRequest(PatientRecordController controller, Address address){
+		dataLoader.makeRequest(new Request(RequestCodes.UPDATE_PATIENT_ADDRESS_REQUEST, address));
+		dataLoader.addGuiTask(new UpdateAddressTask(dataLoader, controller, address));
 	}
 
-	public void makeRegisterPatientRequest(int patientID) {
-		dataLoader.makeRequest(new Request(RequestCodes.REGISTER_PATIENT_REQUEST, patientID));
+	public void makeAddPatientRequest(AddPersonController controller, int PID, int PIN){
+		dataLoader.makeRequest(new Request(RequestCodes.ADD_PATIENT_REQUEST, PID, PIN));
+		dataLoader.addGuiTask(new AddPatientTask(dataLoader, controller));	
+	}
+
+	public void makeDeletePatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		dataLoader.makeRequest(new Request(RequestCodes.DELETE_PATIENT_REQUEST, patient.getPatientID()));
+		dataLoader.addGuiTask(new PatientTabTask(dataLoader, patient, RequestCodes.DELETE_PATIENT_REQUEST, "Se sterge pacientul..."));
+	}
+
+	public void makeDeceasedPatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		dataLoader.makeRequest(new Request(RequestCodes.DECEASED_PATIENT_REQUEST, patient.getPatientID()));
+		dataLoader.addGuiTask(new PatientTabTask(dataLoader, patient, RequestCodes.DECEASED_PATIENT_REQUEST, "Se actualizeaza datele..."));
+	}
+
+	public void makeUnregisterPatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		dataLoader.makeRequest(new Request(RequestCodes.UNREGISTER_PATIENT_REQUEST, patient.getPatientID()));
+		dataLoader.addGuiTask(new PatientTabTask(dataLoader, patient, RequestCodes.UNREGISTER_PATIENT_REQUEST, "Se dezinscrie pacientul..."));
+	}
+
+	public void makeRegisterPatientRequest(Patient patient){
+		if(patient == null)
+			return;
+
+		dataLoader.makeRequest(new Request(RequestCodes.REGISTER_PATIENT_REQUEST, patient.getPatientID()));
+		dataLoader.addGuiTask(new PatientTabTask(dataLoader, patient, RequestCodes.REGISTER_PATIENT_REQUEST, "Se inscrie pacientul..."));
 	}
 	
-	public void makeDeceasedPatientRequest(int patientID) {
-		dataLoader.makeRequest(new Request(RequestCodes.DECEASED_PATIENT_REQUEST, patientID));
+	public Patient getPatientByID(int id){
+		for(Patient patient : dataLoader.getPatientList())
+			if(patient.getPatientID() == id)
+				return patient;
+		
+		return null;
 	}
 }

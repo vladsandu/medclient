@@ -1,9 +1,12 @@
 package medproject.medclient.dataLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import medproject.medclient.concurrency.MedicationWindowTask;
+import medproject.medclient.graphicalInterface.prescriptionWindow.PrescriptionWindowController;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
@@ -15,11 +18,11 @@ import medproject.medlibrary.medication.Medication;
 public class MedicationLoader {
 	private final Logger LOG = LogWriter.getLogger(this.getClass().getName());
 	private final DataLoader dataLoader;
-	private final List<Drug> drugList;
+	private final ObservableList<Drug> drugList;
 	
 	public MedicationLoader(DataLoader dataLoader){
 		this.dataLoader = dataLoader;
-		drugList = new ArrayList<Drug>();
+		drugList = FXCollections.observableArrayList();
 	}
 
 	public void processRequest(Request request){
@@ -29,7 +32,7 @@ public class MedicationLoader {
 		case RequestCodes.MEDICATION_LIST_REQUEST:
 			processMedicationListRequest(request);	break;
 		default:	
-			processGUITaskRequest(request);			break;
+			dataLoader.processGuiTask(request);			break;
 		}
 	}
 	
@@ -68,17 +71,6 @@ public class MedicationLoader {
 		}		
 	}
 
-	private void processGUITaskRequest(Request request) {
-		LOG.info(request.getMessage());
-
-		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
-			
-			GUIUtils.showErrorDialog("Error", request.getMessage());
-		}
-
-		dataLoader.processGuiTask(request);
-	}
-
 	public void loadDrugList() {
 		dataLoader.makeRequest(new Request(RequestCodes.DRUG_LIST_REQUEST, null));
 	}
@@ -87,11 +79,27 @@ public class MedicationLoader {
 		dataLoader.makeRequest(new Request(RequestCodes.MEDICATION_LIST_REQUEST, null));
 	}
 	
+	public void makeAddMedicationRequest(PrescriptionWindowController controller, Medication medication, int pin){
+		dataLoader.makeRequest(new Request(RequestCodes.ADD_MEDICATION_REQUEST, medication, pin));
+		dataLoader.addGuiTask(new MedicationWindowTask(
+				dataLoader, controller, medication, RequestCodes.ADD_MEDICATION_REQUEST, "Se adauga medicatia..."));	
+	}
+
+	public void makeDeleteMedicationRequest(PrescriptionWindowController controller, Medication medication, int pin){
+		dataLoader.makeRequest(new Request(RequestCodes.DELETE_MEDICATION_REQUEST, medication.getID(), pin));
+		dataLoader.addGuiTask(new MedicationWindowTask(
+				dataLoader, controller, medication, RequestCodes.DELETE_MEDICATION_REQUEST, "Se sterge medicatia..."));	
+	}
+
 	public Drug getDrugForID(int drugID){
 		for(Drug drug : drugList)
 			if(drug.getID() == drugID)
 				return drug;
 		
 		return null;
+	}
+
+	public ObservableList<Drug> getDrugList() {
+		return drugList;
 	}
 }

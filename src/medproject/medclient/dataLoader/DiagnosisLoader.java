@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import medproject.medclient.concurrency.DiagnosisTabTask;
+import medproject.medclient.graphicalInterface.examinationWindow.diagnosisTabScene.DiagnosisTabController;
 import medproject.medclient.utils.GUIUtils;
 import medproject.medlibrary.concurrency.Request;
 import medproject.medlibrary.concurrency.RequestCodes;
@@ -31,7 +33,7 @@ public class DiagnosisLoader {
 		case RequestCodes.DIAGNOSIS_INFO_LIST_REQUEST:
 			processDiagnosisInfoListRequest(request);
 		default:	
-			processGUITaskRequest(request);			break;
+			dataLoader.processGuiTask(request);			break;
 		}
 	}
 	
@@ -71,17 +73,6 @@ public class DiagnosisLoader {
 		}
 	}
 
-	private void processGUITaskRequest(Request request) {
-		LOG.info(request.getMessage());
-
-		if(request.getStatus() != RequestStatus.REQUEST_COMPLETED){
-			
-			GUIUtils.showErrorDialog("Error", request.getMessage());
-		}
-
-		dataLoader.processGuiTask(request);
-	}
-
 	public void loadDiagnosisList() {
 		dataLoader.makeRequest(new Request(RequestCodes.DIAGNOSIS_LIST_REQUEST, null));
 	}
@@ -90,6 +81,18 @@ public class DiagnosisLoader {
 		dataLoader.makeRequest(new Request(RequestCodes.DIAGNOSIS_INFO_LIST_REQUEST, null));
 	}
 	
+	public void makeAddDiagnosisRequest(DiagnosisTabController controller, Diagnosis diagnosis, int pin){
+		dataLoader.makeRequest(new Request(RequestCodes.ADD_DIAGNOSIS_REQUEST, diagnosis, pin));
+		dataLoader.addGuiTask(new DiagnosisTabTask(
+				dataLoader, RequestCodes.ADD_DIAGNOSIS_REQUEST, diagnosis, "Se adauga diagnosticul...", controller));	
+	}
+
+	public void makeDeleteDiagnosisRequest(DiagnosisTabController controller, Diagnosis diagnosis, int pin){
+		dataLoader.makeRequest(new Request(RequestCodes.DELETE_DIAGNOSIS_REQUEST, diagnosis.getID(), pin));		
+		dataLoader.addGuiTask(new DiagnosisTabTask(
+				dataLoader, RequestCodes.DELETE_DIAGNOSIS_REQUEST, diagnosis, "Se sterge diagnosticul...", controller));	
+	}
+
 	public DiagnosisInfo getDiagnosisInfoForID(int diagnosisID){
 		for(DiagnosisInfo info : diagnosisInfoList){
 			if(info.getID() == diagnosisID)
@@ -102,4 +105,5 @@ public class DiagnosisLoader {
 	public ObservableList<DiagnosisInfo> getDiagnosisInfoList() {
 		return diagnosisInfoList;
 	}
+
 }
